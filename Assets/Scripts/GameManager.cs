@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public GameObject _currentColumn;
-    public GameObject _nextColumn;
+    [SerializeField] GameObject _currentColumn;
+    [SerializeField] GameObject _nextColumn;
 
     Column _currentCol;
     Column _nextCol;
@@ -14,18 +14,13 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
-        _currentCol = _currentColumn.GetComponent<Column>();
-        _currentCol.SetActiveStick();
-        _currentStick = _currentCol._stick.GetComponent<Stick>();
-
-
-        _nextCol = _nextColumn.GetComponent<Column>();
+        UpdateValueOfColums();
     }
     private void Update()
     {
         if(Input.GetMouseButton(0))
          {
-            _currentCol._stick.GetComponent<Stick>().Grow();
+            _currentStick.Grow();
         }
         if (Input.GetMouseButtonUp(0))
         {
@@ -34,21 +29,25 @@ public class GameManager : Singleton<GameManager>
     }
     IEnumerator StickSpillAndPlayerMove()
     {
+
         _currentStick.Spill();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.45f);
 
         HeroController._instance.MoveByX(_currentStick.GetHeightStick());
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
-        if (!_nextCol.PlayerOnColumn(_currentStick.GetPosXStickHorizontal()))
+        float PosXCurrentStick = _currentStick.GetPosXStickHorizontal();
+
+        if (!_nextCol.PlayerOnColumn(PosXCurrentStick))
         {
             _currentStick.Rotate90Degereeto180Degree();
+
              HeroController._instance.MoveDown(); 
         }
         else
         {
             HeroController._instance.MoveToPoint(_nextCol._endPoint.transform.position);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(1f);
 
             MovePlatForm._instance.SetPositionXCamera();
             yield return new WaitForSeconds(0.1f);
@@ -58,26 +57,38 @@ public class GameManager : Singleton<GameManager>
     }
     void ChangeColumns()
     {
+         AddElementToObjectPool();
+
         _currentColumn = _nextColumn;
         _nextColumn = BornNewColumn();
 
+        UpdateValueOfColums();
+    }
+    private void UpdateValueOfColums()
+    {
         _currentCol = _currentColumn.GetComponent<Column>();
-        _currentCol.SetActiveStick();
-
+        _currentCol.EnableStick();
         _currentStick = _currentCol._stick.GetComponent<Stick>();
 
         _nextCol = _nextColumn.GetComponent<Column>();
-
-    }
+    }    
+    void AddElementToObjectPool()
+    {
+        _currentColumn.transform.parent = ObjectPooler._instance.gameObject.transform;
+        ObjectPooler._instance.AddElement("Col5", _currentColumn);
+    }    
     private GameObject BornNewColumn()
     {
         Vector3 LastPosChild = transform.GetChild(transform.childCount - 1).position;
         Vector3 newPosChild = new Vector3(LastPosChild.x + Random.RandomRange(2.24f, 3.2f), LastPosChild.y, 0);
-        int randomColumn = 5;/*Random.RandomRange(2, 7);*/
-        GameObject newColumn = Instantiate(Resources.Load("Column/" + randomColumn, typeof(GameObject)), newPosChild, Quaternion.identity) as GameObject;
+
+        GameObject newColumn = ObjectPooler._instance.SpawnFromPool("Col5", newPosChild, Quaternion.identity);
+
+        newColumn.GetComponent<Column>().ResetColumn();
+
         newColumn.transform.parent = this.transform;
         return newColumn;
-       // newColumn.GetComponent<Column>()._stick.transform.parent = _worldTransform;
+    
     }
 
 

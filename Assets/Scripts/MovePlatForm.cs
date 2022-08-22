@@ -24,6 +24,7 @@ public class MovePlatForm : Singleton<MovePlatForm>
     public void SetPositionXCamera()
     {
         UpdatePositionHero();
+
         Vector3 newPositionCamera = new Vector3(_camera.transform.position.x + _currentPosXHero - _oldPosXHero, _camera.transform.position.y, _camera.transform.position.z);
         StartCoroutine(Move(_camera.transform, newPositionCamera, 0.7f));
 

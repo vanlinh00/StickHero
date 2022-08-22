@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class HeroController : Singleton<HeroController>
 {
-    [SerializeField] float _moveSpeed;
-
+    [SerializeField] float _timeMove;
    public void MoveDown()
     {  
         Vector3 Target = new Vector3(transform.position.x, transform.position.y-5f, 0);
@@ -15,7 +14,7 @@ public class HeroController : Singleton<HeroController>
     public void MoveByX(float x)
     {  
           Vector3 Target = new Vector3(transform.position.x+x, transform.position.y, 0);
-         StartCoroutine(Move(transform, Target, 0.5f));
+         StartCoroutine(Move(transform, Target, 1f));
     }
 
     public void MoveToPoint(Vector3 Target)
@@ -31,7 +30,7 @@ public class HeroController : Singleton<HeroController>
         {
             passed += Time.deltaTime;
             var normalized = passed / TotalTime;
-            var current = Vector3.Lerp(init, Target, normalized* _moveSpeed);
+            var current = Vector3.Lerp(init, Target, normalized);
             CurrentTransform.position = current;
             yield return null;
         }

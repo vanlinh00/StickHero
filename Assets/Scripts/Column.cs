@@ -8,24 +8,23 @@ public class Column : MonoBehaviour
     [SerializeField] GameObject _goodPoint;
     public GameObject _stick;
 
-    public void SetActiveStick()
+    public void EnableStick()
     {
         _stick.SetActive(true);
     }
-    public bool PlayerOnColumn(float posXPlayer)
+    public void TurnOffStick()
     {
-        //float posLeft= transform.localScale.x* transform.gameObject.GetComponent<SpriteRenderer>().drawMode=
+        _stick.SetActive(false);
+    }    
+    public bool PlayerOnColumn(float PosXPlayer)
+    {
         float posLeft = transform.position.x-(transform.localScale.x * 9.78f)/2;
         float posRight= transform.position.x +(transform.localScale.x * 9.78f) / 2;
-        return (posLeft <= posXPlayer && posXPlayer <= posRight) ? true : false;
+        return (posLeft <= PosXPlayer && PosXPlayer <= posRight) ? true : false;
     }
+    public void ResetColumn()
+    {
+        _stick.GetComponent<Stick>().ResetStick();
+    }    
     
-
-    /*   void Start()
-        {
-            Debug.Log(_stick.transform.localScale.y);
-            Debug.Log(_stick.transform.lossyScale.y);
-        }*/
-  
-
 }

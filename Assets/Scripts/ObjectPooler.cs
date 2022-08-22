@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPooler : MonoBehaviour
+public class ObjectPooler : Singleton<ObjectPooler>
 {
     #region Singleton
     public static ObjectPooler Instance;
     private void Awake()
     {
-        Instance = this;
+        base.Awake();
     }
     #endregion
 
@@ -55,12 +55,16 @@ public class ObjectPooler : MonoBehaviour
         objectToSpawn.transform.position = position;
         objectToSpawn.transform.rotation = rotation;
 
-        poolDictionary[tag].Enqueue(objectToSpawn);
-
         return objectToSpawn;
     }
-    void Update()
+    public void AddElement(string tag,GameObject objectToSpawn)
     {
+   
+        if (!poolDictionary.ContainsKey(tag))
+        {
+            Debug.LogWarning("Pool with tag" + tag + "doesn't excist");
+        }
 
-    }
+        poolDictionary[tag].Enqueue(objectToSpawn);
+    }    
 }

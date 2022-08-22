@@ -255,6 +255,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speedScale: 1.5
   _smoothRotation: 4
+  _oldlocalScale: {x: 0.02531172, y: 0, z: 0}
 --- !u!50 &5696511321980054819
 Rigidbody2D:
   serializedVersion: 4

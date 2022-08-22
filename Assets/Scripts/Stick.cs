@@ -10,8 +10,12 @@ public class Stick : MonoBehaviour
     private int _countCollideStick = 0;
     private bool _isCollideStickRight = false;
 
-    bool _isSpill = false;
-    bool _isSpill180 = false;
+    private bool _isSpill = false;
+    private bool _isSpill180 = false;
+
+    // use to object pooling
+    [SerializeField] Vector3 _oldlocalScale;
+
 
     private void Start()
     {
@@ -77,4 +81,15 @@ public class Stick : MonoBehaviour
         }
     }
 
+   public void ResetStick()
+    {
+        _countCollideStick = 0;
+        _isCollideStickRight = false;
+
+        _isSpill = false;
+        _isSpill180 = false;
+
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+        transform.localScale = _oldlocalScale;
+    }    
 }
