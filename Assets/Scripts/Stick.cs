@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Stick : MonoBehaviour
 {
-    [SerializeField] float _speedScale;
-    [SerializeField] float _smoothRotation;
+    private float _speedScale= 0.26f;
+    private float _smoothRotation =2.5f;
 
     private int _countCollideStick = 0;
     private bool _isCollideStickRight = false;
@@ -13,7 +13,7 @@ public class Stick : MonoBehaviour
     private bool _isSpill = false;
     private bool _isSpill180 = false;
 
-    // use to object pooling
+    // use for object pooling
     [SerializeField] Vector3 _oldlocalScale;
 
 
@@ -22,6 +22,7 @@ public class Stick : MonoBehaviour
          gameObject.SetActive(false);
     }
 
+  
     public void Grow()
     {
         if (!_isCollideStickRight && !_isSpill)
@@ -50,15 +51,17 @@ public class Stick : MonoBehaviour
     }
     public void Rotate90Degereeto180Degree()
     {
-        if (!_isCollideStickRight&& !_isSpill180)
+        if (!_isSpill180)
         {
             StartCoroutine(FadeRotation(-90f, -180f));
                 _isSpill180 = true;
         }  
     }
+
+
     IEnumerator FadeRotation(float currentDegree, float Degree)
     {
-        yield return new WaitForSeconds(0.35f);
+       // yield return new WaitForSeconds(0.35f);
         float t = currentDegree;
         while (t >= Degree)
         {

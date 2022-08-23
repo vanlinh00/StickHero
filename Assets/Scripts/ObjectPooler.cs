@@ -6,7 +6,7 @@ public class ObjectPooler : Singleton<ObjectPooler>
 {
     #region Singleton
     public static ObjectPooler Instance;
-    private void Awake()
+   protected override void Awake()
     {
         base.Awake();
     }

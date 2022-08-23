@@ -1,25 +1,33 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HeroController : Singleton<HeroController>
 {
     [SerializeField] float _timeMove;
-   public void MoveDown()
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+    public void MoveDown()
     {  
         Vector3 Target = new Vector3(transform.position.x, transform.position.y-5f, 0);
-        StartCoroutine(Move(transform, Target, 1f));
+      //StartCoroutine(Move(transform, Target, 0.5f));
+        transform.DOMove(Target, 0.5f);
     }
 
     public void MoveByX(float x)
     {  
           Vector3 Target = new Vector3(transform.position.x+x, transform.position.y, 0);
-         StartCoroutine(Move(transform, Target, 1f));
+          StartCoroutine(Move(transform, Target, 0.5f));
+      //   transform.DOMove(Target, 0.5f);
     }
 
     public void MoveToPoint(Vector3 Target)
     {
-        StartCoroutine(Move(transform, Target, 1f));
+        // StartCoroutine(Move(transform, Target, 0.5f));
+        transform.DOMove(Target, 0.5f);
     }
 
     IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
@@ -34,5 +42,24 @@ public class HeroController : Singleton<HeroController>
             CurrentTransform.position = current;
             yield return null;
         }
+
     }
+
+    //IEnumerator Move(Transform startMarker, Vector3 targetPosition, float startTime)
+    //{
+    //    float speed = 1.0F;
+    //    float journeyLength;
+    //    startTime = Time.time;
+    //    journeyLength = Vector3.Distance(startMarker.position, targetPosition);
+    //    float distCovered = (Time.time - startTime) * speed;
+    //    float fractionOfJourney = distCovered / journeyLength;
+    //    float timeElapsed = 0;
+    //    while (timeElapsed < distCovered)
+    //    {
+    //        timeElapsed += fractionOfJourney;
+    //        transform.position = Vector3.Lerp(startMarker.position, targetPosition, fractionOfJourney);
+    //        yield return null;
+    //    }
+    //}
+
 }
