@@ -27,6 +27,7 @@ public void SetEnablePerfectTxt()
     {
         GameManager._instance.SetCurrentSore(Score);
         int currentSore = GameManager._instance.GetCurrentSore();
+
         _scoreTxt.text = currentSore.ToString();
     }
 

@@ -20,23 +20,38 @@ public class DataPlayer
             inforPlayer = new InforPlayer
             {
                 idLoadGameAgain = level,
+                BestScore = 0,
             };
             SaveData();
         }
     }
+
     private static void SaveData()
     {
         var data = JsonUtility.ToJson(inforPlayer);
         PlayerPrefs.SetString(ALL_DATA, data);
     }
+
     public static void UpdataLoadGameAgain(bool _idLoadGameAgain)
     {
         inforPlayer = new InforPlayer
         {
             idLoadGameAgain = _idLoadGameAgain,
+            BestScore = DataPlayer.getInforPlayer().BestScore,
         };
         SaveData();
     }
+
+    public static void UpdateBestScore(int Score)
+    {
+        inforPlayer = new InforPlayer
+        {
+            idLoadGameAgain = DataPlayer.getInforPlayer().idLoadGameAgain,
+            BestScore = Score,
+        };
+        SaveData();
+    }
+
     public static InforPlayer getInforPlayer()
     {
         return inforPlayer;
@@ -44,6 +59,6 @@ public class DataPlayer
 }
 public class InforPlayer
 {
-
     public bool idLoadGameAgain;
+    public int BestScore;
 }

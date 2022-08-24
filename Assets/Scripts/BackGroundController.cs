@@ -4,32 +4,25 @@ using UnityEngine;
 
 public class BackGroundController : Singleton<BackGroundController>
 {
-    [SerializeField] GameObject _hero;
     [SerializeField] GameObject _backGround;
 
-    private float _currentPosXHero = 0f;
-    private float _oldPosXHero = 0f;
     [SerializeField] float _timeMove;
 
     protected override void Awake()
     {
         base.Awake();
     }
-    void Start()
-    {
-        _currentPosXHero = _hero.transform.position.x;
+   public void BornNewBackGround()
+    { 
+         Vector3 lastPosChild = transform.GetChild(transform.childCount - 1).position;
+        Vector3 newPosChild = new Vector3(lastPosChild.x + 18.99258f, lastPosChild.y, lastPosChild.z);
+        GameObject newBackGround = ObjectPooler._instance.SpawnFromPool("Bg_1", newPosChild, Quaternion.identity);
+        newBackGround.transform.parent = transform;
     }
-   public void FllowToPlayer()
+   public void MoveToLeft()
     {
-        UpdatePositionHero();
-        Vector3 newPositionBackGround = new Vector3(_backGround.transform.position.x + _currentPosXHero - _oldPosXHero, _backGround.transform.position.y, _backGround.transform.position.z);
-        StartCoroutine(Move(_backGround.transform, newPositionBackGround, _timeMove));
-    }
-
-    private void UpdatePositionHero()
-    {
-        _oldPosXHero = _currentPosXHero;
-        _currentPosXHero = _hero.transform.position.x;
+        Vector3 newPostCamera = new Vector3(transform.position.x - 1f, transform.position.y, transform.position.z);
+        StartCoroutine(Move(transform, newPostCamera, _timeMove));
     }
     IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
     {

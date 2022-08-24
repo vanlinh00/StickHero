@@ -6,12 +6,10 @@ using UnityEngine.UI;
 
 public class UiController : Singleton<UiController>
 {
- 
-    [SerializeField] GameObject _gameOverPanel;
-    [SerializeField] Button _restartBt;
-
-    [SerializeField] GameObject _startGamePanel;
     [SerializeField] GameObject _gamePlayPanel;
+    [SerializeField] GameObject _gameOverPanel;
+    [SerializeField] GameObject _gameHomePanel;
+  
 
 
     private void OnEnable()
@@ -21,35 +19,32 @@ public class UiController : Singleton<UiController>
 
         if (inforPlayer.idLoadGameAgain)
         {
-            // Set Camera
-            Vector3 newPositionCamera = new Vector3(0.49f, 0, -10);
-            CameraController._instance.gameObject.transform.position = newPositionCamera;
+            CameraController._instance.SetCameraGPTOGP();
             EnableGamePlayPanel();
         }
         else
-        { 
-            EnableGameStartPanel();
+        {
+            EnableGameHomePanel();
         }
 
     }
     protected override void Awake()
     {
         base.Awake();
-        _restartBt.onClick.AddListener(RestartGame);
     }
     public void EnableGameOverPanel()
     {
         _gameOverPanel.SetActive(true);
-        _startGamePanel.SetActive(false);
+        _gameHomePanel.SetActive(false);
         _gamePlayPanel.SetActive(false);
 
     }    
-    public void EnableGameStartPanel()
+    public void EnableGameHomePanel()
     {
         GameManager._instance._isPlaying = false;
 
         _gameOverPanel.SetActive(false);
-        _startGamePanel.SetActive(true);
+        _gameHomePanel.SetActive(true);
         _gamePlayPanel.SetActive(false);
     }    
     public void EnableGamePlayPanel()
@@ -59,14 +54,11 @@ public class UiController : Singleton<UiController>
 
         GameManager._instance._isPlaying = true;
 
+        StartCoroutine(GameManager._instance.PlayerGoToEndPointOnCurrentCol());
+
         _gameOverPanel.SetActive(false);
-        _startGamePanel.SetActive(false);
+        _gameHomePanel.SetActive(false);
         _gamePlayPanel.SetActive(true);
     }    
-   public void RestartGame()
-    {
-        // SaveData
-        DataPlayer.UpdataLoadGameAgain(true);
-        SceneManager.LoadScene(0);
-    }   
+
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Column : MonoBehaviour
 {
     public GameObject _endPoint;
-    [SerializeField] GameObject _goodPoint;
+    public GameObject _goodPoint;
     public GameObject _stick;
 
     public void EnableGoodPoint()

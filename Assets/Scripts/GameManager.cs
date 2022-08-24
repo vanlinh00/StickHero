@@ -29,21 +29,11 @@ public class GameManager : Singleton<GameManager>
     {
         _currentSore = 0;
         UpdateValueOfColums();
-
     }
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
-        {
-            if (EventSystem.current.IsPointerOverGameObject())
-            {
-                _canClick = false;
-            }
-            else
-            {
-                _canClick = true;
-            }
-        }
+
+        CheckCantClick();
 
         if (_canClick == false)
         {
@@ -64,10 +54,35 @@ public class GameManager : Singleton<GameManager>
 
         }
     }
-    
+    void CheckCantClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (EventSystem.current.IsPointerOverGameObject())
+            {
+                _canClick = false;
+            }
+            else
+            {
+                _canClick = true;
+            }
+        }
+
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+            {
+                _canClick = false;
+            }
+            else
+            {
+                _canClick = true;
+            }
+        }
+    }
+
     IEnumerator StickSpill()
     {
-
         _currentStick.Spill();
         yield return new WaitForSeconds(0.5555555f);
 
@@ -75,8 +90,11 @@ public class GameManager : Singleton<GameManager>
 
         StartCoroutine(CheckStickOnGoodPoint(PosXCurrentStick));
 
+        BackGroundController._instance.MoveToLeft();
+
         HeroController._instance.MoveByX(_currentStick.GetHeightStick());
         yield return new WaitForSeconds(0.5f);
+
 
         StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
 
@@ -89,7 +107,16 @@ public class GameManager : Singleton<GameManager>
         if (isStickOnGoodPoint)
         {
             GamePlay._instance.SetEnablePerfectTxt();
-            yield return new WaitForSeconds(0.4f);
+
+            Vector3 _currentPlushOneTxt = new Vector3(_nextCol._goodPoint.transform.position.x+0.04f, _nextCol._goodPoint.transform.position.y, _nextCol._goodPoint.transform.position.z);
+            GameObject newPlusOne=  ObjectPooler._instance.SpawnFromPool("PlusOneTxt", _currentPlushOneTxt,Quaternion.identity);
+            newPlusOne.GetComponent<PlusOneTxt>().DimAplaColor();
+            yield return new WaitForSeconds(2f);
+
+           string tagColumn = "PlusOneTxt";
+
+           ObjectPooler._instance.AddElement(tagColumn, newPlusOne);
+
             GamePlay._instance.SetDenablePerfectTxt();
         }
     }
@@ -111,20 +138,36 @@ public class GameManager : Singleton<GameManager>
         else
         {
             _nextCol.EnableGoodPoint();
+            GamePlay._instance.UpdateScore(1);
 
             HeroController._instance.MoveToPoint(_nextCol._endPoint.transform.position);
             yield return new WaitForSeconds(0.5f);
 
-            BackGroundController._instance.FllowToPlayer();
             CameraController._instance.FllowToPlayer();
 
             yield return new WaitForSeconds(0.1f);
 
             ChangeColumns();
-
+            BornBackGroundFromObjectPool();
         }
 
     }    
+    void BornBackGroundFromObjectPool()
+    {      
+        // born new backgoround and add to object pool
+        BackGroundController._instance.BornNewBackGround();
+
+        GameObject oldBackGround = BackGroundController._instance.gameObject.transform.GetChild(0).gameObject;
+
+        string tagColumn = "Bg_1";
+        ObjectPooler._instance.AddElement(tagColumn, oldBackGround);
+
+    }
+   public IEnumerator PlayerGoToEndPointOnCurrentCol()
+    {
+        yield return new WaitForSeconds(0.1f);
+        HeroController._instance.MoveToPoint(_currentCol._endPoint.gameObject.transform.position);
+    }
     void ChangeColumns()
     {
          AddElementToObjectPool();
@@ -157,7 +200,9 @@ public class GameManager : Singleton<GameManager>
         Vector3 LastPosChild = _allColumns.transform.GetChild(_allColumns.transform.childCount - 1).position;
         Vector3 newPosChild = new Vector3(LastPosChild.x + Random.RandomRange(2.24f, 3.4f), LastPosChild.y, 0);
 
-        int Column = Random.RandomRange(1, 6);
+        int Column = Random.RandomRange(0, 5);
+
+        // 
         GameObject newColumn = ObjectPooler._instance.SpawnFromPool("Col"+ Column, newPosChild, Quaternion.identity);
 
         newColumn.name = Column.ToString();

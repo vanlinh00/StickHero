@@ -12,7 +12,8 @@ public class CameraController : Singleton<CameraController>
     private float _oldPosXHero = 0f;
 
 
-    // set Camrera  : StartGame : -1.9, 0.86
+    // Camera -0.5  1.1  -10
+    //new Vector3(1.58f, 0, -10);
     protected override void Awake()
     {
         base.Awake();
@@ -23,15 +24,25 @@ public class CameraController : Singleton<CameraController>
         UpdatePositionHero();
 
         Vector3 newPositionCamera = new Vector3(_camera.transform.position.x + _currentPosXHero - _oldPosXHero, _camera.transform.position.y, _camera.transform.position.z);
+        
         StartCoroutine(Move(_camera.transform, newPositionCamera, _timeMove));
 
     }
-    public void SetCameraGamePlay()
+    public void SetCameraGHToGP()
     {
-        Vector3 newPositionCamera = new Vector3(0.49f, 0, -10);
+        Vector3 newPositionCamera = new Vector3(1.58f, 0, -10);
         StartCoroutine(Move(_camera.transform, newPositionCamera, 0.32f));
     }
-
+    public void SetCameraGPTOGP()
+    {
+        Vector3 newPositionCamera = new Vector3(1.58f, 0, -10);
+        transform.position = newPositionCamera;
+    }
+    //public void SetCameraGameHome()
+    //{
+    //    Vector3 newPositionCamera = new Vector3(-0.5f, 1.1f, -10);
+    //    transform.position = newPositionCamera;
+    //}
     private void UpdatePositionHero()
     {
         _oldPosXHero = _currentPosXHero;
