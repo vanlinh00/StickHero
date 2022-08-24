@@ -10,8 +10,6 @@ public class UiController : Singleton<UiController>
     [SerializeField] GameObject _gameOverPanel;
     [SerializeField] GameObject _gameHomePanel;
   
-
-
     private void OnEnable()
     {
         // Get data form DataPlayer

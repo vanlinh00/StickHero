@@ -37,6 +37,19 @@ public class Column : MonoBehaviour
     {
         _goodPoint.SetActive(true);
         _stick.GetComponent<Stick>().ResetStick();
-    }    
-    
+    }
+    IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
+    {
+        var passed = 0f;
+        var init = CurrentTransform.transform.position;
+        while (passed < TotalTime)
+        {
+            passed += Time.deltaTime;
+            var normalized = passed / TotalTime;
+            var current = Vector3.Lerp(init, Target, normalized);
+            CurrentTransform.position = current;
+            yield return null;
+        }
+
+    }
 }

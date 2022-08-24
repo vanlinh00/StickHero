@@ -14,6 +14,8 @@ public class GameHome : Singleton<GameHome>
 
     void PlayGame()
     {
+        SoundManager._instance.OnPlayAudio(SoundType.kick);
+
         UiController._instance.EnableGamePlayPanel();
         CameraController._instance.SetCameraGHToGP();
     }

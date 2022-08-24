@@ -6,6 +6,7 @@ using UnityEngine;
 public class HeroController : Singleton<HeroController>
 {
     [SerializeField] float _timeMove;
+    [SerializeField] SpriteRenderer _heroSprite;
     protected override void Awake()
     {
         base.Awake();
@@ -28,6 +29,18 @@ public class HeroController : Singleton<HeroController>
     {
         // StartCoroutine(Move(transform, Target, 0.5f));
         transform.DOMove(Target, 0.5f);
+    }
+
+    public void FlipDown()
+    {
+        transform.position = new Vector3(transform.position.x, -2.234f, transform.position.z);
+        _heroSprite.flipY = true;
+    }
+
+    public void FilpUp()
+    {
+        transform.position = new Vector3(transform.position.x, -1.922364f, transform.position.z);
+        _heroSprite.flipY = false;
     }
 
     IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)

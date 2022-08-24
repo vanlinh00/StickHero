@@ -26,12 +26,15 @@ public class GameOver : Singleton<GameOver>
     }
     public void RestartGame()
     {
+        SoundManager._instance.OnPlayAudio(SoundType.kick);
         // SaveData
         DataPlayer.UpdataLoadGameAgain(true);
         SceneManager.LoadScene(0);
     }
     public void GoToHome()
     {
+        SoundManager._instance.OnPlayAudio(SoundType.kick);
+
         SceneManager.LoadScene(0);
     }
     
