@@ -6,6 +6,8 @@ public class GamePlay : Singleton<GamePlay>
 {
     [SerializeField] Text _perfectTxt;
     [SerializeField] Text _scoreTxt;
+    [SerializeField] Text _countLemonTxt;
+    [SerializeField] GameObject _tutorialOb;
 
     protected override void Awake()
     {
@@ -14,6 +16,10 @@ public class GamePlay : Singleton<GamePlay>
     void Start()
     {
         _perfectTxt.gameObject.SetActive(false);
+    }
+    public void SetDenableTutorialTxt()
+    {
+        _tutorialOb.SetActive(false);
     }
 public void SetEnablePerfectTxt()
     {
@@ -27,8 +33,13 @@ public void SetEnablePerfectTxt()
     {
         GameManager._instance.SetCurrentSore(Score);
         int currentSore = GameManager._instance.GetCurrentSore();
-
         _scoreTxt.text = currentSore.ToString();
+    }
+    public void UpdateAmountLemon(int AmountLemon)
+    {
+        GameManager._instance.SetCountCurrentLemon(AmountLemon);
+        int _countCurrentLemo = GameManager._instance.GetCountCurrentLemon();
+        _countLemonTxt.text = _countCurrentLemo.ToString();
     }
 
 }

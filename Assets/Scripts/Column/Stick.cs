@@ -16,13 +16,10 @@ public class Stick : MonoBehaviour
     // use for object pooling
     [SerializeField] Vector3 _oldlocalScale;
 
-
     private void Start()
     {
          gameObject.SetActive(false);
     }
-
-  
     public void Grow()
     {
         if (!_isCollideStickRight && !_isSpill)
@@ -61,7 +58,6 @@ public class Stick : MonoBehaviour
 
     IEnumerator FadeRotation(float currentDegree, float Degree)
     {
-       // yield return new WaitForSeconds(0.35f);
         float t = currentDegree;
         while (t >= Degree)
         {

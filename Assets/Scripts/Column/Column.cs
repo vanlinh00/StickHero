@@ -22,10 +22,20 @@ public class Column : MonoBehaviour
     }    
     public bool PlayerOnColumn(float PosXPlayer)
     {
-        float posLeft = transform.position.x-(transform.localScale.x * 9.78f)/2;
-        float posRight= transform.position.x +(transform.localScale.x * 9.78f) / 2;
-        return (posLeft <= PosXPlayer && PosXPlayer <= posRight) ? true : false;
+        float posXLeft = transform.position.x-(transform.localScale.x * 9.78f)/2;
+        float posXRight= transform.position.x +(transform.localScale.x * 9.78f) / 2;
+        return (posXLeft <= PosXPlayer && PosXPlayer <= posXRight) ? true : false;
     }
+
+    public float GetPosXleft()
+    {
+        return (transform.position.x - (transform.localScale.x * 9.78f) / 2);
+    }
+    public float GetPosXRight()
+    {
+        return transform.position.x + (transform.localScale.x * 9.78f) / 2;
+    }
+
     public bool StickOnGoodPoint(float PosXStick)
     {
         float posLeft = _goodPoint.transform.position.x - (_goodPoint.transform.lossyScale.x * 4.51f) / 2;
@@ -37,19 +47,5 @@ public class Column : MonoBehaviour
     {
         _goodPoint.SetActive(true);
         _stick.GetComponent<Stick>().ResetStick();
-    }
-    IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
-    {
-        var passed = 0f;
-        var init = CurrentTransform.transform.position;
-        while (passed < TotalTime)
-        {
-            passed += Time.deltaTime;
-            var normalized = passed / TotalTime;
-            var current = Vector3.Lerp(init, Target, normalized);
-            CurrentTransform.position = current;
-            yield return null;
-        }
-
     }
 }
