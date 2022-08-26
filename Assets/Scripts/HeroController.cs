@@ -9,9 +9,9 @@ public class HeroController : Singleton<HeroController>
     [SerializeField] float _timeMove;
     public SpriteRenderer _heroSprite;
 
-    public bool _canClick = true;
+    private bool _canClick = true;
 
-    public int _countClick = 0;
+    public int countClick = 0;
 
     public bool isMoveX = false;
 
@@ -28,6 +28,7 @@ public class HeroController : Singleton<HeroController>
        die,
        live,
     }
+
     public HeroState heroState;
 
     protected override void Awake()
@@ -43,18 +44,17 @@ public class HeroController : Singleton<HeroController>
         {
             return;
         }
-            if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0))
+         {
+               if(GameManager._instance.isPlaying)
             {
-               if(GameManager._instance._isPlaying)
-             {
-                _countClick++;
-            }
-              
-        }
+                countClick++;
+             }
+        }  
 
         if (isMoveX)
         {
-            if (_countClick % 2 == 0)
+            if (countClick % 2 == 0)
             {
                 FlipDown();
             }
@@ -62,9 +62,8 @@ public class HeroController : Singleton<HeroController>
             {
                 FilpUp();
             }
-
             //3.3796
-            var step = _speed *Time.deltaTime; // calculate distance to move
+            var step = _speed *Time.deltaTime;
             transform.position = Vector3.MoveTowards(transform.position, _target, step);
 
             if (DistanceWithPosXLeftCol() <= 0.15f&&_heroSprite.flipY)
@@ -72,13 +71,12 @@ public class HeroController : Singleton<HeroController>
                 isMoveX=false;
                 GameManager._instance.GameOver();
                 heroState = HeroState.die;
-
             }
         }
 
     }
     // t= 3.3795/ 3
-    // t= 3 / 3
+    // t= 3.2 / 3
     public void CaculerSpeed()
     { 
        //  with distance = 3.3795 => V= 3
@@ -89,11 +87,9 @@ public class HeroController : Singleton<HeroController>
     }
     public float CaculerTimeWait()
     {
-        float DistanceTo = Mathf.Abs(transform.position.x - _target.x);
-
-        return (DistanceTo / _speed);
+        float DisHeroToTarget = Mathf.Abs(transform.position.x - _target.x);
+        return (DisHeroToTarget / _speed);
     }    
-
     void CheckCantClick()
     {
         if (Input.GetMouseButtonDown(0))
@@ -131,7 +127,7 @@ public class HeroController : Singleton<HeroController>
     public void MoveDown()
     {  
         Vector3 Target = new Vector3(transform.position.x, transform.position.y-5f, 0);
-      //StartCoroutine(Move(transform, Target, 0.5f));
+       //StartCoroutine(Move(transform, Target, 0.5f));
         transform.DOMove(Target, 0.5f);
     }
 
@@ -139,7 +135,7 @@ public class HeroController : Singleton<HeroController>
     {  
           Vector3 Target = new Vector3(transform.position.x+x, transform.position.y, 0);
           StartCoroutine(Move(transform, Target, 0.5f));
-      //   transform.DOMove(Target, 0.5f);
+       //   transform.DOMove(Target, 0.5f);
     }
 
     public void MoveToPoint(Vector3 Target)

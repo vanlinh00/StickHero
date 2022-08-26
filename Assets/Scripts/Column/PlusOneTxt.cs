@@ -5,12 +5,12 @@ using UnityEngine;
 using TMPro;
 public class PlusOneTxt : MonoBehaviour
 {
-    [SerializeField] TMP_Text textMesh;
+    [SerializeField] TMP_Text _textMesh;
    public void DimAplaColor()
     {
         StartCoroutine(FadeColor(250));
     }
-    // 250/ 4  = 0.5/ x
+    // 250/1   = 0.5/ x
     IEnumerator FadeColor(byte FadeColor)
     {  
         while (0 < FadeColor)
@@ -19,7 +19,7 @@ public class PlusOneTxt : MonoBehaviour
             Vector3 newPos = new Vector3(transform.position.x, transform.position.y + 0.004f, transform.position.z);
             transform.position = newPos;
             yield return new WaitForEndOfFrame();
-            textMesh.color = new Color32(0, 0, 0, FadeColor);
+            _textMesh.color = new Color32(0, 0, 0, FadeColor);
 
         }
 

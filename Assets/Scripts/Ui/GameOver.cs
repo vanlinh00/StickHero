@@ -34,14 +34,12 @@ public class GameOver : Singleton<GameOver>
     public void GoToHome()
     {
         SoundManager._instance.OnPlayAudio(SoundType.kick);
-
         SceneManager.LoadScene(0);
     }
     
     public void UpdateCurrentScore()
     {
         int CurrentScore = GameManager._instance.GetCurrentSore();
-
         _currentScoreTxt.text = CurrentScore.ToString();
         UpdateBestScore(CurrentScore);
     }

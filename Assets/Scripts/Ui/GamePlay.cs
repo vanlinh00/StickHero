@@ -21,11 +21,11 @@ public class GamePlay : Singleton<GamePlay>
     {
         _tutorialOb.SetActive(false);
     }
-public void SetEnablePerfectTxt()
+    public void SetEnablePerfectTxt()
     {
         _perfectTxt.gameObject.SetActive(true);
     }
- public void SetDenablePerfectTxt()
+    public void SetDenablePerfectTxt()
     {
         _perfectTxt.gameObject.SetActive(false);
     }
@@ -38,8 +38,8 @@ public void SetEnablePerfectTxt()
     public void UpdateAmountLemon(int AmountLemon)
     {
         GameManager._instance.SetCountCurrentLemon(AmountLemon);
-        int _countCurrentLemo = GameManager._instance.GetCountCurrentLemon();
-        _countLemonTxt.text = _countCurrentLemo.ToString();
+        int CountCurrentLemo = GameManager._instance.GetCountCurrentLemon();
+        _countLemonTxt.text = CountCurrentLemo.ToString();
     }
 
 }

@@ -18,15 +18,14 @@ public class GameManager : Singleton<GameManager>
 
     Stick _currentStick;
 
-    public bool _isPlaying;
-    public bool _canClick = true;
+    public bool isPlaying;
+    private bool _canClick = true;
 
     private int _currentSore;
     private int _countCurrentLemon;
 
     private bool _isPlayerOnStick = false;
 
-    private bool _isTutorial = true;
     protected override void Awake()
     {
         base.Awake();
@@ -38,15 +37,13 @@ public class GameManager : Singleton<GameManager>
     }
     private void Update()
     {
-
-        CheckCantClick();
+        CheckCanClick();
 
         if (_canClick == false)
         {
             return;
         }
-
-        if (_isPlaying)
+        if (isPlaying)
         {
             if (Input.GetMouseButton(0))
             {
@@ -54,12 +51,16 @@ public class GameManager : Singleton<GameManager>
             }
             if (Input.GetMouseButtonUp(0))
             {
-                StartCoroutine(StickSpill());
+                if (!_isPlayerOnStick)
+                {
+                    _isPlayerOnStick = true;
+                    StartCoroutine(StickSpill());
+                }
             }
 
         }
     }
-    void CheckCantClick()
+    void CheckCanClick()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -88,12 +89,6 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator StickSpill()
     {
-        if (!_isPlayerOnStick)
-        {
-            _isPlayerOnStick = true;
-
-            yield return new WaitForSeconds(0.25f);
-
             _currentStick.Spill();
 
             yield return new WaitForSeconds(0.5555555f);
@@ -121,9 +116,7 @@ public class GameManager : Singleton<GameManager>
             HeroController._instance.isMoveX = false;
 
             StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
-        }
     }
-
     IEnumerator CheckStickOnGoodPoint(float PosXCurrentStick )
     {
         bool isStickOnGoodPoint = _nextCol.StickOnGoodPoint(PosXCurrentStick);
@@ -151,15 +144,16 @@ public class GameManager : Singleton<GameManager>
     }
    IEnumerator CheckPlayOnColum(float PosXCurrentStick)
     {
-        bool _isPlayrOnColumn = _nextCol.PlayerOnColumn(PosXCurrentStick);
+        bool isPlayerOnColumn = _nextCol.PlayerOnColumn(PosXCurrentStick);
 
-        if (!_isPlayrOnColumn || HeroController._instance._heroSprite.flipY == true&& HeroController._instance.heroState == HeroState.live)
+       // bad code . i will fix it
+        if (!isPlayerOnColumn || HeroController._instance._heroSprite.flipY == true && HeroController._instance.heroState == HeroState.live)
         {
              GameOver();
         }
         else
         {
-             HeroController._instance._countClick = 0;
+             HeroController._instance.countClick = 0;
 
             if (HeroController._instance.heroState == HeroState.live)    
             {
@@ -172,12 +166,6 @@ public class GameManager : Singleton<GameManager>
                 yield return new WaitForSeconds(0.5f);
 
                 SoundManager._instance.OnPlayAudio(SoundType.score);
-
-                if(_isTutorial==true)
-                {
-                    yield return new WaitForSeconds(1f);
-                    GamePlay._instance.SetDenableTutorialTxt();
-                }    
 
                 ChangeColumns();
 

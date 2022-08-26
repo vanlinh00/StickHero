@@ -5,9 +5,7 @@ using UnityEngine;
 public class BackGroundController : Singleton<BackGroundController>
 {
     [SerializeField] GameObject _backGround;
-
     [SerializeField] float _timeMove;
-
     protected override void Awake()
     {
         base.Awake();

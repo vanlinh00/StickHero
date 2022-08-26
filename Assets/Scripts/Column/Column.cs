@@ -26,7 +26,6 @@ public class Column : MonoBehaviour
         float posXRight= transform.position.x +(transform.localScale.x * 9.78f) / 2;
         return (posXLeft <= PosXPlayer && PosXPlayer <= posXRight) ? true : false;
     }
-
     public float GetPosXleft()
     {
         return (transform.position.x - (transform.localScale.x * 9.78f) / 2);
@@ -35,12 +34,10 @@ public class Column : MonoBehaviour
     {
         return transform.position.x + (transform.localScale.x * 9.78f) / 2;
     }
-
     public bool StickOnGoodPoint(float PosXStick)
     {
         float posLeft = _goodPoint.transform.position.x - (_goodPoint.transform.lossyScale.x * 4.51f) / 2;
         float posRight = _goodPoint.transform.position.x + (_goodPoint.transform.lossyScale.x * 4.51f) / 2;
-
         return (posLeft <= PosXStick && PosXStick <= posRight) ? true : false;
     }    
     public void ResetColumn()
