@@ -7,7 +7,8 @@ using UnityEngine.EventSystems;
 public class HeroController : Singleton<HeroController>
 {
     [SerializeField] float _timeMove;
-    public SpriteRenderer _heroSprite;
+ 
+   // [SerializeField] SpriteRenderer _heroSprite;
 
     private bool _canClick = true;
 
@@ -15,18 +16,20 @@ public class HeroController : Singleton<HeroController>
 
     public bool isMoveX = false;
 
-    public Vector3 _target= new Vector3(0,0,0);
+    private Vector3 _target= new Vector3(0,0,0);
 
     public float disTanceWithColX;  
 
     private float _speed = 3f;
 
+    [SerializeField] Animator _animator;
     public enum HeroState
     {
        idle,
        run,
        die,
-       live,
+       living,
+       shrug,
     }
 
     public HeroState heroState;
@@ -34,12 +37,13 @@ public class HeroController : Singleton<HeroController>
     protected override void Awake()
     {
         base.Awake();
-        heroState = HeroState.live;
+        heroState = HeroState.living;
     }
 
     private void Update()
     {
         CheckCantClick();
+
         if (_canClick == false)
         {
             return;
@@ -55,25 +59,44 @@ public class HeroController : Singleton<HeroController>
         if (isMoveX)
         {
             if (countClick % 2 == 0)
-            {
-                FlipDown();
-            }
-            else
-            {
-                FilpUp();
-            }
-            //3.3796
-            var step = _speed *Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, _target, step);
-
-            if (DistanceWithPosXLeftCol() <= 0.15f&&_heroSprite.flipY)
-            {
-                isMoveX=false;
-                GameManager._instance.GameOver();
-                heroState = HeroState.die;
-            }
+                {
+                    FlipDown();
+                }
+                else
+                {
+                    FilpUp();
+                }
+                //3.3796
+                var step = _speed * Time.deltaTime;
+                StateRun();
+                transform.position = Vector3.MoveTowards(transform.position, _target, step);
+              
+                if (DistanceWithPosXLeftCol() <= 0.15f && IsFlipY())
+                {
+                    isMoveX = false;
+                    GameManager._instance.GameOver();
+                    heroState = HeroState.die;
+                }
+        }
+        else
+        {
+            StateIdle();
         }
 
+    }
+    public void StateIdle()
+    {
+        _animator.SetBool("Run", false);
+        _animator.SetBool("Shrug", false);
+    }
+    public void StateRun()
+    {
+        _animator.SetBool("Run", true);
+    }
+    public void StateShrug()
+    {
+        _animator.SetBool("Run", false);
+        _animator.SetBool("Shrug", true);
     }
     // t= 3.3795/ 3
     // t= 3.2 / 3
@@ -127,35 +150,31 @@ public class HeroController : Singleton<HeroController>
     public void MoveDown()
     {  
         Vector3 Target = new Vector3(transform.position.x, transform.position.y-5f, 0);
-       //StartCoroutine(Move(transform, Target, 0.5f));
         transform.DOMove(Target, 0.5f);
-    }
-
-    public void MoveByX(float x)
-    {  
-          Vector3 Target = new Vector3(transform.position.x+x, transform.position.y, 0);
-          StartCoroutine(Move(transform, Target, 0.5f));
-       //   transform.DOMove(Target, 0.5f);
     }
 
     public void MoveToPoint(Vector3 Target)
     {
-        // StartCoroutine(Move(transform, Target, 0.5f));
+        StateRun();
         transform.DOMove(Target, 0.5f);
+        StateIdle();
     }
 
     public void FlipDown()
     {
-          transform.position = new Vector3(transform.position.x, -2.234f, transform.position.z);
-         _heroSprite.flipY = true;
+          transform.position = new Vector3(transform.position.x, -2.289f, transform.position.z);
+         transform.eulerAngles = new Vector3(0, -180f, -180f);
     }
 
     public void FilpUp()
     {
-      transform.position = new Vector3(transform.position.x, -1.922364f, transform.position.z);
-        _heroSprite.flipY = false;
+         transform.position = new Vector3(transform.position.x, -1.862f, transform.position.z);
+         transform.eulerAngles = new Vector3(0, 0, 0);
     }
-
+    public bool IsFlipY()
+    {
+         return (transform.rotation.eulerAngles.y == 180f) ? true : false;
+    }
     public void UpdateTarget(Vector3 NewTarget)
     {
         _target = NewTarget;
@@ -174,22 +193,5 @@ public class HeroController : Singleton<HeroController>
         }
 
     }
-
-    //IEnumerator Move(Transform startMarker, Vector3 targetPosition, float startTime)
-    //{
-    //    float speed = 1.0F;
-    //    float journeyLength;
-    //    startTime = Time.time;
-    //    journeyLength = Vector3.Distance(startMarker.position, targetPosition);
-    //    float distCovered = (Time.time - startTime) * speed;
-    //    float fractionOfJourney = distCovered / journeyLength;
-    //    float timeElapsed = 0;
-    //    while (timeElapsed < distCovered)
-    //    {
-    //        timeElapsed += fractionOfJourney;
-    //        transform.position = Vector3.Lerp(startMarker.position, targetPosition, fractionOfJourney);
-    //        yield return null;
-    //    }
-    //}
 
 }

@@ -17,7 +17,7 @@ public class UiController : Singleton<UiController>
 
         if (inforPlayer.idLoadGameAgain)
         {
-            CameraController._instance.SetCameraGPTOGP();
+            MoveToPlayer._instance.SetCameraGPTOGP();
             EnableGamePlayPanel();
         }
         else

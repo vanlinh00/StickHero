@@ -6,6 +6,8 @@ public class BackGroundController : Singleton<BackGroundController>
 {
     [SerializeField] GameObject _backGround;
     [SerializeField] float _timeMove;
+
+    [SerializeField] float _distanceBeweentBg= 18.99258f;
     protected override void Awake()
     {
         base.Awake();
@@ -13,7 +15,7 @@ public class BackGroundController : Singleton<BackGroundController>
    public void BornNewBackGround()
     { 
          Vector3 lastPosChild = transform.GetChild(transform.childCount - 1).position;
-         Vector3 newPosChild = new Vector3(lastPosChild.x + 18.99258f, lastPosChild.y, lastPosChild.z);
+         Vector3 newPosChild = new Vector3(lastPosChild.x + _distanceBeweentBg, lastPosChild.y, lastPosChild.z);
          GameObject newBackGround = ObjectPooler._instance.SpawnFromPool("Bg_1", newPosChild, Quaternion.identity);
          newBackGround.transform.parent = transform;
     }

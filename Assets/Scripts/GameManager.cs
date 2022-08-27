@@ -107,15 +107,13 @@ public class GameManager : Singleton<GameManager>
 
             HeroController._instance.isMoveX = true;
 
-            //   HeroController._instance.MoveByX(_currentStick.GetHeightStick());
-
             // T = S/V      /// with distance = 3.3795 => V= 3     => t =1.1265
 
             yield return new WaitForSeconds (HeroController._instance.CaculerTimeWait());
 
             HeroController._instance.isMoveX = false;
 
-            StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
+        StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
     }
     IEnumerator CheckStickOnGoodPoint(float PosXCurrentStick )
     {
@@ -144,18 +142,17 @@ public class GameManager : Singleton<GameManager>
     }
    IEnumerator CheckPlayOnColum(float PosXCurrentStick)
     {
+        HeroController._instance.countClick = 0;
+
         bool isPlayerOnColumn = _nextCol.PlayerOnColumn(PosXCurrentStick);
 
-       // bad code . i will fix it
-        if (!isPlayerOnColumn || HeroController._instance._heroSprite.flipY == true && HeroController._instance.heroState == HeroState.live)
+        if (!isPlayerOnColumn || HeroController._instance.IsFlipY() && HeroController._instance.heroState == HeroState.living)
         {
              GameOver();
         }
         else
         {
-             HeroController._instance.countClick = 0;
-
-            if (HeroController._instance.heroState == HeroState.live)    
+            if (HeroController._instance.heroState == HeroState.living)    
             {
                 _nextCol.EnableGoodPoint();
 
@@ -169,7 +166,7 @@ public class GameManager : Singleton<GameManager>
 
                 ChangeColumns();
 
-                CameraController._instance.FllowToPlayer();
+                MoveToPlayer._instance.FllowToPlayer();
 
                 BornNewMelonFromObjectPool();
 
