@@ -20,7 +20,9 @@ public class DataPlayer
             inforPlayer = new InforPlayer
             {
                 idLoadGameAgain = false,
-                BestScore = 0,
+                bestScore = 0,
+                amountMelon = 0,
+                listIdHero = new List<int>() { 0},
             };
             SaveData();
         }
@@ -32,23 +34,33 @@ public class DataPlayer
         PlayerPrefs.SetString(ALL_DATA, data);
     }
 
-    public static void UpdataLoadGameAgain(bool _idLoadGameAgain)
+    public static void UpdataLoadGameAgain(bool IsLoadGameAgain)
     {
-        inforPlayer = new InforPlayer
-        {
-            idLoadGameAgain = _idLoadGameAgain,
-            BestScore = DataPlayer.getInforPlayer().BestScore,
-        };
+        inforPlayer.idLoadGameAgain = IsLoadGameAgain;
         SaveData();
     }
 
     public static void UpdateBestScore(int Score)
     {
-        inforPlayer = new InforPlayer
-        {
-            idLoadGameAgain = DataPlayer.getInforPlayer().idLoadGameAgain,
-            BestScore = Score,
-        };
+        //inforPlayer = new InforPlayer
+        //{
+        //    idLoadGameAgain = DataPlayer.getInforPlayer().idLoadGameAgain,
+        //    bestScore = Score,
+        //    amountMelon = DataPlayer.getInforPlayer().amountMelon,
+        //    listIdHero = new List<int>() { 0, 1, 2, 3 },
+        //};
+        inforPlayer.bestScore = Score;
+        SaveData();
+    }
+
+    public static void UpdateAmountHero(int AmountMelon)
+    {
+        inforPlayer.amountMelon = AmountMelon;
+        SaveData();
+    }
+    public static void UpdateListIdHero(int IdHero)
+    {
+        inforPlayer.listIdHero.Add(IdHero);
         SaveData();
     }
 
@@ -60,5 +72,7 @@ public class DataPlayer
 public class InforPlayer
 {
     public bool idLoadGameAgain;
-    public int BestScore;
+    public int bestScore;
+    public int amountMelon;
+    public List<int> listIdHero;
 }

@@ -35,6 +35,7 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         _currentSore = 0;
+       _countCurrentLemon = DataPlayer.getInforPlayer().amountMelon;
         UpdateValueOfColums();
     }
     private void Update()
@@ -297,6 +298,7 @@ public class GameManager : Singleton<GameManager>
     public void SetCountCurrentLemon(int AmountLemon)
     {
         _countCurrentLemon += AmountLemon;
+        DataPlayer.UpdateAmountHero(_countCurrentLemon);
     }
     public int GetCountCurrentLemon()
     {

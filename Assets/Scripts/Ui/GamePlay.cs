@@ -16,6 +16,7 @@ public class GamePlay : Singleton<GamePlay>
     void Start()
     {
         _perfectTxt.gameObject.SetActive(false);
+        _countLemonTxt.text = GameManager._instance.GetCountCurrentLemon().ToString();
     }
     public void SetDenableTutorialTxt()
     {

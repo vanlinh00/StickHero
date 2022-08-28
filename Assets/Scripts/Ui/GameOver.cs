@@ -45,7 +45,7 @@ public class GameOver : Singleton<GameOver>
     }
     public void UpdateBestScore(int CurrentScore)
     {
-        int BestScore = DataPlayer.getInforPlayer().BestScore;
+        int BestScore = DataPlayer.getInforPlayer().bestScore;
         if(BestScore<CurrentScore)
         {
             BestScore = CurrentScore;

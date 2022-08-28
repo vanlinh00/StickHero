@@ -61,7 +61,7 @@ public class BackGroundController : Singleton<BackGroundController>
    public void MoveToLeft()
     {
          Vector3 newPosBackGround = new Vector3(_backGrounDynamic.transform.position.x - 1f, _backGrounDynamic.transform.position.y, _backGrounDynamic.transform.position.z);
-         StartCoroutine(Move(_backGrounDynamic.transform, newPosBackGround, _timeMove));
+         StartCoroutine(Move(_backGrounDynamic.transform, newPosBackGround, 2.29f));
     }
 
     public void FllowPlayer()
