@@ -24,10 +24,12 @@ public class GameManager : Singleton<GameManager>
     private int _currentSore;
     private int _countCurrentLemon;
 
-    private bool _isPlayerOnStick = false;
+    public bool _isPlayerOnStick = false;
 
     protected override void Awake()
     {
+        isPlaying = false;
+
         base.Awake();
     }
     private void Start()
@@ -113,7 +115,7 @@ public class GameManager : Singleton<GameManager>
 
             HeroController._instance.isMoveX = false;
 
-        StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
+            StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
     }
     IEnumerator CheckStickOnGoodPoint(float PosXCurrentStick )
     {
@@ -143,6 +145,7 @@ public class GameManager : Singleton<GameManager>
    IEnumerator CheckPlayOnColum(float PosXCurrentStick)
     {
         HeroController._instance.countClick = 0;
+        Debug.Log(" HeroController._instance.countClick " + HeroController._instance.countClick);
 
         bool isPlayerOnColumn = _nextCol.PlayerOnColumn(PosXCurrentStick);
 
@@ -159,14 +162,14 @@ public class GameManager : Singleton<GameManager>
                 GamePlay._instance.UpdateScore(1);
 
                 HeroController._instance.MoveToPoint(_nextCol._endPoint.transform.position);
-
                 yield return new WaitForSeconds(0.5f);
-
+              
                 SoundManager._instance.OnPlayAudio(SoundType.score);
 
                 ChangeColumns();
 
-                MoveToPlayer._instance.FllowToPlayer();
+                BackGroundController._instance.FllowPlayer();
+                CameraController._instance.FllowToPlayer();
 
                 BornNewMelonFromObjectPool();
 
@@ -194,11 +197,11 @@ public class GameManager : Singleton<GameManager>
     void BornBackGroundFromObjectPool()
     {      
         // born new backgoround and add to object pool
-        BackGroundController._instance.BornNewBackGround();
+        BackGroundController._instance.BornNewBGDynamic();
 
-        GameObject oldBackGround = BackGroundController._instance.gameObject.transform.GetChild(0).gameObject;
+        GameObject oldBackGround = BackGroundController._instance._backGrounDynamic.gameObject.transform.GetChild(0).gameObject;
 
-        string tagColumn = "Bg_1";
+        string tagColumn = "bg_"+BackGroundController._instance.idBg;
 
         ObjectPooler._instance.AddElement(tagColumn, oldBackGround);
 

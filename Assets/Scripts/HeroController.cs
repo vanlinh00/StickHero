@@ -7,8 +7,6 @@ using UnityEngine.EventSystems;
 public class HeroController : Singleton<HeroController>
 {
     [SerializeField] float _timeMove;
- 
-   // [SerializeField] SpriteRenderer _heroSprite;
 
     private bool _canClick = true;
 
@@ -37,6 +35,7 @@ public class HeroController : Singleton<HeroController>
     protected override void Awake()
     {
         base.Awake();
+
         heroState = HeroState.living;
     }
 
@@ -50,21 +49,23 @@ public class HeroController : Singleton<HeroController>
         }
         if (Input.GetMouseButtonUp(0))
          {
-               if(GameManager._instance.isPlaying)
+              if (GameManager._instance.isPlaying /*&& GameManager._instance._isPlayerOnStick*/) 
             {
                 countClick++;
-             }
-        }  
+                Debug.Log("countClick" + countClick);
+            }
+        }
 
         if (isMoveX)
         {
+            Debug.Log(countClick);
             if (countClick % 2 == 0)
                 {
-                    FlipDown();
-                }
-                else
+                FlipDown();
+            }
+            else
                 {
-                    FilpUp();
+                FilpUp();
                 }
                 //3.3796
                 var step = _speed * Time.deltaTime;
@@ -193,5 +194,4 @@ public class HeroController : Singleton<HeroController>
         }
 
     }
-
 }

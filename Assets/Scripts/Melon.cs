@@ -8,7 +8,7 @@ public class Melon : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            GamePlay._instance.UpdateAmountLemon(1);
+            GamePlay._instance.UpdateAmountMeLon(1);
             gameObject.SetActive(false);
         }
     }

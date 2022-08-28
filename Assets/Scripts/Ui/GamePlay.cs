@@ -35,7 +35,7 @@ public class GamePlay : Singleton<GamePlay>
         int currentSore = GameManager._instance.GetCurrentSore();
         _scoreTxt.text = currentSore.ToString();
     }
-    public void UpdateAmountLemon(int AmountLemon)
+    public void UpdateAmountMeLon(int AmountLemon)
     {
         GameManager._instance.SetCountCurrentLemon(AmountLemon);
         int CountCurrentLemo = GameManager._instance.GetCountCurrentLemon();

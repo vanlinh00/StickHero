@@ -17,7 +17,7 @@ public class UiController : Singleton<UiController>
 
         if (inforPlayer.idLoadGameAgain)
         {
-            MoveToPlayer._instance.SetCameraGPTOGP();
+            CameraController._instance.SetCameraGPTOGP();
             EnableGamePlayPanel();
         }
         else
@@ -47,8 +47,6 @@ public class UiController : Singleton<UiController>
     }    
     public void EnableGamePlayPanel()
     {
-        // SaveData
-        DataPlayer.UpdataLoadGameAgain(false);
         GameManager._instance.isPlaying = true;
 
         StartCoroutine(GameManager._instance.PlayerGoToEndPointOnCurrentCol());

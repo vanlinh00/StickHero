@@ -16,10 +16,10 @@ public class DataPlayer
 
         if (inforPlayer == null)
         {
-            var level = false;
+
             inforPlayer = new InforPlayer
             {
-                idLoadGameAgain = level,
+                idLoadGameAgain = false,
                 BestScore = 0,
             };
             SaveData();
