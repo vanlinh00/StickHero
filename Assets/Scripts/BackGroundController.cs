@@ -20,6 +20,10 @@ public class BackGroundController : Singleton<BackGroundController>
         base.Awake();
         StartCoroutine(ChangeBackGround());
     }
+    private void Start()
+    {
+        _hero = HeroController._instance.gameObject;
+    }
     IEnumerator ChangeBackGround()
     {
         yield return new WaitForEndOfFrame();

@@ -9,6 +9,7 @@ public class ShopHero : MonoBehaviour
     [SerializeField] GameObject _conTent;
     [SerializeField] Text _amountMelon;
 
+    public ElementShopHero[] _listElementShopHero;
     private int _toTalHero=8;
     private void Awake()
     {
@@ -17,8 +18,7 @@ public class ShopHero : MonoBehaviour
     private void OnEnable()
     {
         _amountMelon.text = GameManager._instance.GetCountCurrentLemon().ToString();
-        Debug.Log(DataPlayer.getInforPlayer().listIdHero[0]);
-       // LoadShopeHero();
+        LoadShopeHero();
     }
     void QuiteShop()
     {
@@ -26,10 +26,24 @@ public class ShopHero : MonoBehaviour
     }
     void LoadShopeHero()
     {
-       for(int i=0;i<_toTalHero;i++)
+       for(int i=0;i<_listElementShopHero.Length;i++)
         {
-            GameObject newButtonBuyHero = Instantiate(Resources.Load("Hero/ShopeHero/BuyHeroBtn", typeof(GameObject))) as GameObject;
-            newButtonBuyHero.transform.parent = _conTent.transform;
+            int PriceHero = Random.RandomRange(40, 80);
+            var HeroImg = Resources.Load<Sprite>("Hero/Img/hero-"+i);
+
+            if (DataPlayer.getInforPlayer().listIdHero.Contains(i))
+            {
+                _listElementShopHero[i].IsBought();
+            }
+
+            _listElementShopHero[i].LoadData(HeroImg, i, PriceHero);
+        }
+    }
+    private void OnValidate()
+    {
+        if (_listElementShopHero == null || _listElementShopHero.Length == 0)
+        {
+            _listElementShopHero = GetComponentsInChildren<ElementShopHero>();
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraController : Singleton<CameraController>
 {
-    [SerializeField] GameObject _hero;
+    GameObject _hero;
     [SerializeField] GameObject _camera;
 
    // [SerializeField] GameObject _backGroundIdle;
@@ -16,6 +16,10 @@ public class CameraController : Singleton<CameraController>
     protected override void Awake()
     {
         base.Awake();
+    }
+    private void Start()
+    {
+        _hero = HeroController._instance.gameObject;
     }
     public void FllowToPlayer()
     {
