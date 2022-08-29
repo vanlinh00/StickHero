@@ -41,8 +41,9 @@ public class ElementShopHero : MonoBehaviour
             int _price = Int16.Parse(_pirceTxt.text.ToString());
             if(_currentAmountMelon>=_price)
             {
+                GameManager._instance.SetCountCurrentLemon(-1);
                 IsBought();
-                DataPlayer.UpdateAmountHero(_idHero);
+                DataPlayer.AddNewIdHero(_idHero);
             }
             else
             {
@@ -51,8 +52,21 @@ public class ElementShopHero : MonoBehaviour
         }
         else
         {
-            // load hero form resource
-            // go to Game home
+            if (_idHero <= 4)
+            {
+                Vector3 oldPosHero = GameManager._instance._hero.transform.position;
+                GameObject OldHero = GameObject.FindGameObjectWithTag("Player");
+                DestroyObject(OldHero);
+                GameObject newHero = Instantiate(Resources.Load("Hero/Object/Hero_" + _idHero, typeof(GameObject)), oldPosHero, Quaternion.identity) as GameObject;
+                GameManager._instance.UpLoadHero(newHero);
+
+                DataPlayer.getInforPlayer().idHeroPlaying = _idHero;
+                ShopHero._instance.QuiteShop();
+            }
+            else
+            {
+                Debug.Log("don't have this object in resource");
+            }
         }
     }
    

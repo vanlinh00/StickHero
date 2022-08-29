@@ -22,7 +22,7 @@ public class BackGroundController : Singleton<BackGroundController>
     }
     private void Start()
     {
-        _hero = HeroController._instance.gameObject;
+        _hero = GameObject.FindGameObjectWithTag("Player");
     }
     IEnumerator ChangeBackGround()
     {
@@ -65,7 +65,7 @@ public class BackGroundController : Singleton<BackGroundController>
    public void MoveToLeft()
     {
          Vector3 newPosBackGround = new Vector3(_backGrounDynamic.transform.position.x - 1f, _backGrounDynamic.transform.position.y, _backGrounDynamic.transform.position.z);
-         StartCoroutine(Move(_backGrounDynamic.transform, newPosBackGround, 2.29f));
+         StartCoroutine(Move(_backGrounDynamic.transform, newPosBackGround, 2f));
     }
 
     public void FllowPlayer()
@@ -79,6 +79,7 @@ public class BackGroundController : Singleton<BackGroundController>
     }
     private void UpdatePositionHero()
     {
+        _hero = GameObject.FindGameObjectWithTag("Player");
         _oldPosXHero = _currentPosXHero;
         _currentPosXHero = _hero.transform.position.x;
     }

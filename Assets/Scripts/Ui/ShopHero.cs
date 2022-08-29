@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ShopHero : MonoBehaviour
+public class ShopHero : Singleton<ShopHero>
 {
     [SerializeField] Button _quiteBg;
     [SerializeField] GameObject _conTent;
@@ -11,8 +11,9 @@ public class ShopHero : MonoBehaviour
 
     public ElementShopHero[] _listElementShopHero;
     private int _toTalHero=8;
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         _quiteBg.onClick.AddListener(QuiteShop);
     }
     private void OnEnable()
@@ -20,7 +21,7 @@ public class ShopHero : MonoBehaviour
         _amountMelon.text = GameManager._instance.GetCountCurrentLemon().ToString();
         LoadShopeHero();
     }
-    void QuiteShop()
+   public void QuiteShop()
     {
         this.gameObject.SetActive(false);
     }
@@ -28,7 +29,7 @@ public class ShopHero : MonoBehaviour
     {
        for(int i=0;i<_listElementShopHero.Length;i++)
         {
-            int PriceHero = Random.RandomRange(40, 80);
+            int PriceHero = Random.RandomRange(1, 3);
             var HeroImg = Resources.Load<Sprite>("Hero/Img/hero-"+i);
 
             if (DataPlayer.getInforPlayer().listIdHero.Contains(i))

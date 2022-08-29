@@ -6,6 +6,9 @@ using static HeroController;
 
 public class GameManager : Singleton<GameManager>
 {
+    public GameObject _hero;
+    public HeroController _heroController;
+
     [SerializeField] GameObject _currentColumn;
     [SerializeField] GameObject _nextColumn;
 
@@ -34,10 +37,19 @@ public class GameManager : Singleton<GameManager>
     }
     private void Start()
     {
+        _hero = GameObject.FindGameObjectWithTag("Player");
+        _heroController = _hero.GetComponent<HeroController>();
+
         _currentSore = 0;
        _countCurrentLemon = DataPlayer.getInforPlayer().amountMelon;
         UpdateValueOfColums();
     }
+   public void UpLoadHero(GameObject Hero)
+    {
+        _hero = Hero;
+        _heroController = _hero.GetComponent<HeroController>();
+    }
+
     private void Update()
     {
         CheckCanClick();
@@ -102,19 +114,20 @@ public class GameManager : Singleton<GameManager>
 
             BackGroundController._instance.MoveToLeft();
 
-            HeroController._instance.disTanceWithColX = _nextCol.GetPosXleft();
+            _heroController.disTanceWithColX = _nextCol.GetPosXleft();
 
-            HeroController._instance.SetTarget(_currentStick.GetHeightStick());
+            _heroController.SetTarget(_currentStick.GetHeightStick());
 
-            //HeroController._instance.CaculerSpeed();
-
-            HeroController._instance.isMoveX = true;
+             //HeroController._instance.CaculerSpeed();
+             _heroController.StateRun();
+             _heroController.isMoveX = true;
 
             // T = S/V      /// with distance = 3.3795 => V= 3     => t =1.1265
 
-            yield return new WaitForSeconds (HeroController._instance.CaculerTimeWait());
+            yield return new WaitForSeconds (_heroController.CaculerTimeWait());
 
-            HeroController._instance.isMoveX = false;
+             _heroController.isMoveX = false;
+             _heroController.StateIdle();
 
             StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
     }
@@ -145,26 +158,28 @@ public class GameManager : Singleton<GameManager>
     }
    IEnumerator CheckPlayOnColum(float PosXCurrentStick)
     {
-        HeroController._instance.countClick = 0;
-        Debug.Log(" HeroController._instance.countClick " + HeroController._instance.countClick);
+        _heroController.countClick = 0;
+        Debug.Log(" HeroController._instance.countClick " + _heroController.countClick);
 
         bool isPlayerOnColumn = _nextCol.PlayerOnColumn(PosXCurrentStick);
 
-        if (!isPlayerOnColumn || HeroController._instance.IsFlipY() && HeroController._instance.heroState == HeroState.living)
+        if (!isPlayerOnColumn || _heroController.IsFlipY() && _heroController.heroState == HeroState.living)
         {
              GameOver();
         }
         else
         {
-            if (HeroController._instance.heroState == HeroState.living)    
+            if (_heroController.heroState == HeroState.living)    
             {
                 _nextCol.EnableGoodPoint();
 
                 GamePlay._instance.UpdateScore(1);
 
-                HeroController._instance.MoveToPoint(_nextCol._endPoint.transform.position);
+                _heroController.StateRun();
+                _heroController.MoveToPoint(_nextCol._endPoint.transform.position);
                 yield return new WaitForSeconds(0.5f);
-              
+                _heroController.StateIdle();
+
                 SoundManager._instance.OnPlayAudio(SoundType.score);
 
                 ChangeColumns();
@@ -186,7 +201,7 @@ public class GameManager : Singleton<GameManager>
     public void GameOver()
     {
         _currentStick.Rotate90Degereeto180Degree();
-        HeroController._instance.MoveDown();
+        _heroController.MoveDown();
         SoundManager._instance.OnPlayAudio(SoundType.dead);
         StartCoroutine(FadeGameOver());
     }
@@ -210,7 +225,16 @@ public class GameManager : Singleton<GameManager>
     public IEnumerator PlayerGoToEndPointOnCurrentCol()
     {
         yield return new WaitForSeconds(0.1f);
-        HeroController._instance.MoveToPoint(_currentCol._endPoint.gameObject.transform.position);
+        _heroController.StateRun();
+        _heroController.MoveToPoint(_currentCol._endPoint.gameObject.transform.position);
+        yield return new WaitForSeconds(0.5f);
+        _heroController.StateIdle();
+    }
+    public void LoadCurrentHero()
+    {
+        int idHero = DataPlayer.getInforPlayer().idHeroPlaying;
+        GameObject newHero = Instantiate(Resources.Load("Hero/Object/Hero_" + idHero, typeof(GameObject))) as GameObject;
+        UpLoadHero(newHero);
     }
     void ChangeColumns()
     {

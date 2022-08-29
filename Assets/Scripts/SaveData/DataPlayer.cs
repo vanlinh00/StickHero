@@ -23,6 +23,7 @@ public class DataPlayer
                 bestScore = 0,
                 amountMelon = 0,
                 listIdHero = new List<int>() { 0},
+                idHeroPlaying=0,
             };
             SaveData();
         }
@@ -58,16 +59,22 @@ public class DataPlayer
         inforPlayer.amountMelon = AmountMelon;
         SaveData();
     }
-    public static void UpdateListIdHero(int IdHero)
+    public static void AddNewIdHero(int IdHero)
     {
         inforPlayer.listIdHero.Add(IdHero);
         SaveData();
     }
 
+    public static void UpdateHeroPlaying(int IdHero)
+    {
+        inforPlayer.idHeroPlaying = IdHero;
+        SaveData();
+    }
     public static InforPlayer getInforPlayer()
     {
         return inforPlayer;
     }
+ 
 }
 public class InforPlayer
 {
@@ -75,4 +82,5 @@ public class InforPlayer
     public int bestScore;
     public int amountMelon;
     public List<int> listIdHero;
+    public int idHeroPlaying;
 }

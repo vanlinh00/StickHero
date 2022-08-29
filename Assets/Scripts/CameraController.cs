@@ -6,8 +6,6 @@ public class CameraController : Singleton<CameraController>
 {
     GameObject _hero;
     [SerializeField] GameObject _camera;
-
-   // [SerializeField] GameObject _backGroundIdle;
     [SerializeField] float _timeMove;
 
     private float _currentPosXHero = 0f;
@@ -19,7 +17,7 @@ public class CameraController : Singleton<CameraController>
     }
     private void Start()
     {
-        _hero = HeroController._instance.gameObject;
+        _hero = GameObject.FindGameObjectWithTag("Player");
     }
     public void FllowToPlayer()
     {
@@ -39,6 +37,7 @@ public class CameraController : Singleton<CameraController>
     }
     private void UpdatePositionHero()
     {
+        _hero = GameObject.FindGameObjectWithTag("Player");
         _oldPosXHero = _currentPosXHero;
         _currentPosXHero = _hero.transform.position.x;
     }

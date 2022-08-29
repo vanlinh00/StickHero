@@ -19,7 +19,16 @@ public class GameHome : Singleton<GameHome>
     }
     void ClickAudioBtn()
     {
-        _audioBtn.gameObject.transform.GetChild(0).gameObject.SetActive(!_audioBtn.gameObject.transform.GetChild(0).gameObject.activeSelf);
+        bool isActive = _audioBtn.gameObject.transform.GetChild(0).gameObject.activeSelf;
+        _audioBtn.gameObject.transform.GetChild(0).gameObject.SetActive(!isActive);
+        if(!isActive)
+        {
+            SoundManager._instance.GetComponent<AudioSource>().volume = 0f;
+        }
+        else
+        {
+            SoundManager._instance.GetComponent<AudioSource>().volume = 1f;
+        }
     }
     void OpenShope()
     {

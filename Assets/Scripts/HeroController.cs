@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class HeroController : Singleton<HeroController>
+public class HeroController : MonoBehaviour
 {
     [SerializeField] float _timeMove;
 
@@ -32,11 +32,11 @@ public class HeroController : Singleton<HeroController>
 
     public HeroState heroState;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
+    
         heroState = HeroState.living;
+        StateIdle();
     }
 
     private void Update()
@@ -55,7 +55,6 @@ public class HeroController : Singleton<HeroController>
                 Debug.Log("countClick" + countClick);
             }
         }
-
         if (isMoveX)
         {
             Debug.Log(countClick);
@@ -69,7 +68,6 @@ public class HeroController : Singleton<HeroController>
                 }
                 //3.3796
                 var step = _speed * Time.deltaTime;
-                StateRun();
                 transform.position = Vector3.MoveTowards(transform.position, _target, step);
               
                 if (DistanceWithPosXLeftCol() <= 0.15f && IsFlipY())
@@ -78,10 +76,6 @@ public class HeroController : Singleton<HeroController>
                     GameManager._instance.GameOver();
                     heroState = HeroState.die;
                 }
-        }
-        else
-        {
-            StateIdle();
         }
 
     }
@@ -156,9 +150,7 @@ public class HeroController : Singleton<HeroController>
 
     public void MoveToPoint(Vector3 Target)
     {
-        StateRun();
         transform.DOMove(Target, 0.5f);
-        StateIdle();
     }
 
     public void FlipDown()
