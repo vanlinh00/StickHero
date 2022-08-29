@@ -30,11 +30,42 @@ public class CameraController : Singleton<CameraController>
         Vector3 newPositionCamera = new Vector3(1.58f, 0, -10);
         StartCoroutine(Move(_camera.transform, newPositionCamera, 0.32f));
     }
+    public void shake()
+    {
+        //StartCoroutine(FadeShake(0.5f,1f));
+        StartCoroutine(FadeShake());
+    }
+    IEnumerator FadeShake()
+    {
+        yield return new WaitForSeconds(0.2f);
+        for (int i = 0; i < 2; i++)
+        {
+            yield return new WaitForSeconds(0.1f);
+            transform.position = new Vector3(transform.position.x, transform.position.y + 0.06f, transform.position.z);
+            yield return new WaitForSeconds(0.1f);
+            transform.position = new Vector3(transform.position.x, transform.position.y - 0.05f, transform.position.z);
+        }
+    }
+    //public IEnumerator FadeShake(float duration, float magnitude)
+    //{
+    //    yield return new WaitForSeconds(0.2f);
+    //    Vector3 orignalPosition = transform.position;
+    //    float elapsed = 0f;
+    //    while (elapsed < duration)
+    //    {
+    //        float y = Random.Range(-0.1f, 0.1f) * magnitude;
+    //        transform.position = new Vector3(transform.position.x, y, -10f);
+    //        elapsed += Time.deltaTime;
+    //        yield return 0;
+    //    }
+    //    transform.position = orignalPosition;
+    //}
     public void SetCameraGPTOGP()
     {
         Vector3 newPositionCamera = new Vector3(1.58f, 0, -10);
         _camera.transform.position = newPositionCamera;
     }
+
     private void UpdatePositionHero()
     {
         _hero = GameObject.FindGameObjectWithTag("Player");

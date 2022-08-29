@@ -50,6 +50,7 @@ public class BackGroundController : Singleton<BackGroundController>
         float distance = (idBg == 1) ? _distanceBeweentBg : _distanceBeweentBg2;
         Vector3 lastPosChild;
         Vector3 newPosChild;
+
          if (_backGrounDynamic.transform.childCount!=0)
         {
             lastPosChild = _backGrounDynamic.transform.GetChild(_backGrounDynamic.transform.childCount - 1).position;
@@ -64,18 +65,17 @@ public class BackGroundController : Singleton<BackGroundController>
     }
    public void MoveToLeft()
     {
-         Vector3 newPosBackGround = new Vector3(_backGrounDynamic.transform.position.x - 1f, _backGrounDynamic.transform.position.y, _backGrounDynamic.transform.position.z);
-         StartCoroutine(Move(_backGrounDynamic.transform, newPosBackGround, 2f));
+          Vector3 newPosBackGround = new Vector3(_backGrounDynamic.transform.position.x - 1f, _backGrounDynamic.transform.position.y, _backGrounDynamic.transform.position.z);
+          StartCoroutine(Move(_backGrounDynamic.transform, newPosBackGround, 1.1265f));
     }
-
     public void FllowPlayer()
     {
           UpdatePositionHero();
-         Vector3 newPositionBackGrounIdle = new Vector3(_backGroundIdle.transform.position.x + _currentPosXHero - _oldPosXHero, _backGroundIdle.transform.position.y, _backGroundIdle.transform.position.z);
-         StartCoroutine(Move(_backGroundIdle.transform, newPositionBackGrounIdle, _timeMove));
+          Vector3 newPositionBackGrounIdle = new Vector3(_backGroundIdle.transform.position.x + _currentPosXHero - _oldPosXHero, _backGroundIdle.transform.position.y, _backGroundIdle.transform.position.z);
+          StartCoroutine(Move(_backGroundIdle.transform, newPositionBackGrounIdle, _timeMove));
 
-       // Vector3 newPositionBackGrounDynamic = new Vector3(_backGrounDynamic.transform.position.x + _currentPosXHero - _oldPosXHero, _backGrounDynamic.transform.position.y, _backGrounDynamic.transform.position.z);
-        //StartCoroutine(Move(_backGrounDynamic.transform, newPositionBackGrounDynamic, _timeMove));
+          Vector3 newPositionBackGrounDynamic = new Vector3(_backGrounDynamic.transform.position.x + _currentPosXHero - _oldPosXHero, _backGrounDynamic.transform.position.y, _backGrounDynamic.transform.position.z);
+          StartCoroutine(Move(_backGrounDynamic.transform, newPositionBackGrounDynamic, _timeMove));
     }
     private void UpdatePositionHero()
     {

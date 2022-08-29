@@ -28,6 +28,7 @@ public class GameManager : Singleton<GameManager>
     private int _countCurrentLemon;
 
     public bool _isPlayerOnStick = false;
+    private bool _isStick_grow_loop = false;
 
     protected override void Awake()
     {
@@ -60,20 +61,40 @@ public class GameManager : Singleton<GameManager>
         }
         if (isPlaying)
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0)&& !_isPlayerOnStick)
             {
+                _heroController.StateShrug();
+
                 _currentStick.Grow();
+
+                if(!_isStick_grow_loop)
+                {
+                    EnableSoundStickGrow();
+
+                    _isStick_grow_loop = true;
+                }
             }
             if (Input.GetMouseButtonUp(0))
             {
+                SoundManager._instance.audioFx.loop = false;
+
+                _isStick_grow_loop = false;
+
                 if (!_isPlayerOnStick)
                 {
                     _isPlayerOnStick = true;
+
                     StartCoroutine(StickSpill());
                 }
             }
 
         }
+    }
+   
+   public void EnableSoundStickGrow()
+    {
+        SoundManager._instance.OnPlayAudio(SoundType.stick_grow_loop);
+        SoundManager._instance.audioFx.loop = true; 
     }
     void CheckCanClick()
     {
@@ -104,32 +125,39 @@ public class GameManager : Singleton<GameManager>
 
     IEnumerator StickSpill()
     {
+            _heroController.StateKick();
+            yield return new WaitForSeconds(0.5f);
+            SoundManager._instance.OnPlayAudio(SoundType.kick);
+
             _currentStick.Spill();
+             yield return new WaitForSeconds(0.222222f);
+            SoundManager._instance.OnPlayAudio(SoundType.fall);
+            yield return new WaitForSeconds(0.333333f);
 
-            yield return new WaitForSeconds(0.5555555f);
-
-            float PosXCurrentStick = _currentStick.GetPosXStickHorizontal();
+             float PosXCurrentStick = _currentStick.GetPosXStickHorizontal();
 
             StartCoroutine(CheckStickOnGoodPoint(PosXCurrentStick));
-
-            BackGroundController._instance.MoveToLeft();
 
             _heroController.disTanceWithColX = _nextCol.GetPosXleft();
 
             _heroController.SetTarget(_currentStick.GetHeightStick());
 
-             //HeroController._instance.CaculerSpeed();
-             _heroController.StateRun();
+            BackGroundController._instance.MoveToLeft();
+
+            //HeroController._instance.CaculerSpeed();
+            _heroController.StateRun();
+
              _heroController.isMoveX = true;
 
             // T = S/V      /// with distance = 3.3795 => V= 3     => t =1.1265
 
-            yield return new WaitForSeconds (_heroController.CaculerTimeWait());
+             yield return new WaitForSeconds (_heroController.CaculerTimeWait());
 
              _heroController.isMoveX = false;
+
              _heroController.StateIdle();
 
-            StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
+             StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
     }
     IEnumerator CheckStickOnGoodPoint(float PosXCurrentStick )
     {
@@ -151,14 +179,14 @@ public class GameManager : Singleton<GameManager>
 
             string tagColumn = "PlusOneTxt";
 
+            GamePlay._instance.SetDisablePerfectTxt();
             ObjectPooler._instance.AddElement(tagColumn, newPlusOne);
-
-            GamePlay._instance.SetDenablePerfectTxt();
         }
     }
    IEnumerator CheckPlayOnColum(float PosXCurrentStick)
     {
         _heroController.countClick = 0;
+
         Debug.Log(" HeroController._instance.countClick " + _heroController.countClick);
 
         bool isPlayerOnColumn = _nextCol.PlayerOnColumn(PosXCurrentStick);
@@ -171,27 +199,41 @@ public class GameManager : Singleton<GameManager>
         {
             if (_heroController.heroState == HeroState.living)    
             {
-                _nextCol.EnableGoodPoint();
 
                 GamePlay._instance.UpdateScore(1);
 
                 _heroController.StateRun();
+
                 _heroController.MoveToPoint(_nextCol._endPoint.transform.position);
+
                 yield return new WaitForSeconds(0.5f);
+
+                _nextCol.EnableGoodPoint();
+
                 _heroController.StateIdle();
 
                 SoundManager._instance.OnPlayAudio(SoundType.score);
 
+                if (_currentSore == 1)
+                {
+                    GamePlay._instance.DimTutorial();
+                }
+
                 ChangeColumns();
 
-                BackGroundController._instance.FllowPlayer();
+                BackGroundController._instance.FllowPlayer();   
+
                 CameraController._instance.FllowToPlayer();
 
                 BornNewMelonFromObjectPool();
 
                 yield return new WaitForSeconds(0.1f);
 
-                BornBackGroundFromObjectPool();
+                if(_currentSore%5==0)
+                {
+                    BornBackGroundFromObjectPool();
+                }
+  
             }
        
         }
@@ -200,6 +242,7 @@ public class GameManager : Singleton<GameManager>
 
     public void GameOver()
     {
+        
         _currentStick.Rotate90Degereeto180Degree();
         _heroController.MoveDown();
         SoundManager._instance.OnPlayAudio(SoundType.dead);
@@ -207,7 +250,8 @@ public class GameManager : Singleton<GameManager>
     }
     IEnumerator FadeGameOver()
     {
-        yield return new WaitForSeconds(0.7f);
+        CameraController._instance.shake();
+        yield return new WaitForSeconds(0.8f);
         UiController._instance.EnableGameOverPanel();
     }
     void BornBackGroundFromObjectPool()

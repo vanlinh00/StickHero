@@ -55,10 +55,10 @@ public class Stick : MonoBehaviour
         }  
     }
 
-
     IEnumerator FadeRotation(float currentDegree, float Degree)
     {
         float t = currentDegree;
+        _smoothRotation = (currentDegree == -90f) ? 5f* _smoothRotation : 1.5f* _smoothRotation;
         while (t >= Degree)
         {
             yield return new WaitForEndOfFrame();

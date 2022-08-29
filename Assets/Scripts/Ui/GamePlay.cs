@@ -7,30 +7,35 @@ public class GamePlay : Singleton<GamePlay>
     [SerializeField] Text _perfectTxt;
     [SerializeField] Text _scoreTxt;
     [SerializeField] Text _countLemonTxt;
-    [SerializeField] GameObject _tutorialOb;
 
+    [SerializeField] Text _tutorialTxt;
+
+    Animator _animatorTutorialTxt;
     protected override void Awake()
     {
         base.Awake();
     }
     void Start()
     {
+        _animatorTutorialTxt = _tutorialTxt.GetComponent<Animator>();
         _perfectTxt.gameObject.SetActive(false);
+        _animatorTutorialTxt.SetBool("dim", false);
         _countLemonTxt.text = GameManager._instance.GetCountCurrentLemon().ToString();
     }
-    public void SetDenableTutorialTxt()
+    public void DimTutorial()
     {
-        _tutorialOb.SetActive(false);
+        _animatorTutorialTxt.SetBool("dim", true);
     }
+
     public void SetEnablePerfectTxt()
     {
         _perfectTxt.gameObject.SetActive(true);
     }
-    public void SetDenablePerfectTxt()
+    public void SetDisablePerfectTxt()
     {
         _perfectTxt.gameObject.SetActive(false);
     }
-   public void UpdateScore(int Score)
+    public void UpdateScore(int Score)
     {
         GameManager._instance.SetCurrentSore(Score);
         int currentSore = GameManager._instance.GetCurrentSore();

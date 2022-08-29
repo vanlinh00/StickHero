@@ -3217,7 +3217,7 @@ MonoBehaviour:
   _perfectTxt: {fileID: 492358084}
   _scoreTxt: {fileID: 1586110589}
   _countLemonTxt: {fileID: 877039006}
-  _tutorialOb: {fileID: 1403060341}
+  _tutorialTxt: {fileID: 1461397744}
 --- !u!1 &1018413109
 GameObject:
   m_ObjectHideFlags: 0
@@ -4703,7 +4703,7 @@ GameObject:
   - component: {fileID: 1461397744}
   - component: {fileID: 1461397746}
   m_Layer: 5
-  m_Name: line1txt
+  m_Name: TutTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4726,7 +4726,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 13.1, y: -541.2}
-  m_SizeDelta: {x: 698.51666, y: 280.04077}
+  m_SizeDelta: {x: 699.76, y: 280.04077}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1461397744
 MonoBehaviour:
@@ -7990,11 +7990,11 @@ MonoBehaviour:
   - tag: bg_1
     prefab: {fileID: 5436093161443179138, guid: 4229b2638c9fb4c43970553e33fc8366,
       type: 3}
-    size: 10
+    size: 3
   - tag: bg_2
     prefab: {fileID: 7519687515005302696, guid: 79269c5894f06894d877f6b4a905a8a0,
       type: 3}
-    size: 10
+    size: 3
 --- !u!4 &2111023203
 Transform:
   m_ObjectHideFlags: 0
@@ -8781,7 +8781,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6325563136596132661}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.62, y: -4.02, z: 0}
+  m_LocalPosition: {x: -0.6123, y: -3.9921, z: 0}
   m_LocalScale: {x: 0.13007903, y: 0.20707162, z: 1}
   m_Children:
   - {fileID: 6325563137266571967}

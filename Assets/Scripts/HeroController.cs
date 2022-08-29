@@ -58,8 +58,9 @@ public class HeroController : MonoBehaviour
         if (isMoveX)
         {
             Debug.Log(countClick);
+
             if (countClick % 2 == 0)
-                {
+            {
                 FlipDown();
             }
             else
@@ -68,8 +69,7 @@ public class HeroController : MonoBehaviour
                 }
                 //3.3796
                 var step = _speed * Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, _target, step);
-              
+                transform.position = Vector3.MoveTowards(transform.position, _target, step);    
                 if (DistanceWithPosXLeftCol() <= 0.15f && IsFlipY())
                 {
                     isMoveX = false;
@@ -83,6 +83,7 @@ public class HeroController : MonoBehaviour
     {
         _animator.SetBool("Run", false);
         _animator.SetBool("Shrug", false);
+        _animator.SetBool("Kick", false);
     }
     public void StateRun()
     {
@@ -91,7 +92,14 @@ public class HeroController : MonoBehaviour
     public void StateShrug()
     {
         _animator.SetBool("Run", false);
+        _animator.SetBool("Kick", false);
         _animator.SetBool("Shrug", true);
+    }
+    public void StateKick()
+    {   
+        _animator.SetBool("Run", false);
+        _animator.SetBool("Shrug", false);
+        _animator.SetBool("Kick", true);    
     }
     // t= 3.3795/ 3
     // t= 3.2 / 3
@@ -145,7 +153,7 @@ public class HeroController : MonoBehaviour
     public void MoveDown()
     {  
         Vector3 Target = new Vector3(transform.position.x, transform.position.y-5f, 0);
-        transform.DOMove(Target, 0.5f);
+        transform.DOMove(Target, 0.2f);
     }
 
     public void MoveToPoint(Vector3 Target)

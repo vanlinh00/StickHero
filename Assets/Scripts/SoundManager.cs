@@ -9,7 +9,10 @@ public enum SoundType
     score = 2,
     perfect=3,
     kick=4,
-
+    eating_fruit=5,
+    stick_grow_loop=6,
+    bg_sea=7,
+    fall=8,
 }
 public class SoundManager : Singleton<SoundManager>
 {
@@ -26,6 +29,8 @@ public class SoundManager : Singleton<SoundManager>
         var audio = Resources.Load<AudioClip>($"Audio/Sound/{soundType.ToString()}");
         audioFx.clip = audio;
         audioFx.Play();
+    
     }
+
 
 }

@@ -27,6 +27,7 @@ public class GameOver : Singleton<GameOver>
     public void RestartGame()
     {
         SoundManager._instance.OnPlayAudio(SoundType.kick);
+
         // SaveData
         DataPlayer.UpdataLoadGameAgain(true);
         SceneManager.LoadScene(0);
