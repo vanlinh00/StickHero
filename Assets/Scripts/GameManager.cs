@@ -6,8 +6,8 @@ using static HeroController;
 
 public class GameManager : Singleton<GameManager>
 {
-    public GameObject _hero;
-    public HeroController _heroController;
+    public GameObject hero;
+    private HeroController _heroController;
 
     [SerializeField] GameObject _currentColumn;
     [SerializeField] GameObject _nextColumn;
@@ -16,10 +16,10 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] GameObject _allSticks;
     [SerializeField] GameObject _allFuit;
 
-    Column _currentCol;
-    Column _nextCol;
+    private Column _currentCol;
+    private Column _nextCol;
 
-    Stick _currentStick;
+    private Stick _currentStick;
 
     public bool isPlaying;
     private bool _canClick = true;
@@ -27,28 +27,26 @@ public class GameManager : Singleton<GameManager>
     private int _currentSore;
     private int _countCurrentLemon;
 
-    public bool _isPlayerOnStick = false;
+    public bool isPlayerOnStick = false;
     private bool _isStick_grow_loop = false;
 
     protected override void Awake()
     {
         isPlaying = false;
-
         base.Awake();
     }
     private void Start()
     {
-        _hero = GameObject.FindGameObjectWithTag("Player");
-        _heroController = _hero.GetComponent<HeroController>();
-
+        hero = GameObject.FindGameObjectWithTag("Player");
+        _heroController = hero.GetComponent<HeroController>();
         _currentSore = 0;
-       _countCurrentLemon = DataPlayer.getInforPlayer().amountMelon;
+        _countCurrentLemon = DataPlayer.getInforPlayer().amountMelon;
         UpdateValueOfColums();
     }
    public void UpLoadHero(GameObject Hero)
     {
-        _hero = Hero;
-        _heroController = _hero.GetComponent<HeroController>();
+        hero = Hero;
+        _heroController = hero.GetComponent<HeroController>();
     }
 
     private void Update()
@@ -61,7 +59,7 @@ public class GameManager : Singleton<GameManager>
         }
         if (isPlaying)
         {
-            if (Input.GetMouseButton(0)&& !_isPlayerOnStick)
+            if (Input.GetMouseButton(0)&& !isPlayerOnStick)
             {
                 _heroController.StateShrug();
 
@@ -76,25 +74,18 @@ public class GameManager : Singleton<GameManager>
             }
             if (Input.GetMouseButtonUp(0))
             {
-                SoundManager._instance.audioFx.loop = false;
-
                 _isStick_grow_loop = false;
 
-                if (!_isPlayerOnStick)
-                {
-                    _isPlayerOnStick = true;
+                SoundManager._instance.audioFx.loop = false;
 
+                if (!isPlayerOnStick)
+                {
+                    isPlayerOnStick = true;
                     StartCoroutine(StickSpill());
                 }
             }
 
         }
-    }
-   
-   public void EnableSoundStickGrow()
-    {
-        SoundManager._instance.OnPlayAudio(SoundType.stick_grow_loop);
-        SoundManager._instance.audioFx.loop = true; 
     }
     void CheckCanClick()
     {
@@ -124,40 +115,34 @@ public class GameManager : Singleton<GameManager>
     }
 
     IEnumerator StickSpill()
-    {
+    {        
+            // step 1: Hero kick this stick
             _heroController.StateKick();
             yield return new WaitForSeconds(0.5f);
             SoundManager._instance.OnPlayAudio(SoundType.kick);
-
+             
+             // step 2: Stick is spilled
             _currentStick.Spill();
              yield return new WaitForSeconds(0.222222f);
             SoundManager._instance.OnPlayAudio(SoundType.fall);
             yield return new WaitForSeconds(0.333333f);
-
+            
+            // step3: Check header of stick touche the perfect point for nextcolumn
              float PosXCurrentStick = _currentStick.GetPosXStickHorizontal();
-
             StartCoroutine(CheckStickOnGoodPoint(PosXCurrentStick));
-
+            
+            // step 4: Player move to Header of stick
             _heroController.disTanceWithColX = _nextCol.GetPosXleft();
-
             _heroController.SetTarget(_currentStick.GetHeightStick());
-
             BackGroundController._instance.MoveToLeft();
-
-            //HeroController._instance.CaculerSpeed();
             _heroController.StateRun();
-
-             _heroController.isMoveX = true;
-
-            // T = S/V      /// with distance = 3.3795 => V= 3     => t =1.1265
-
-             yield return new WaitForSeconds (_heroController.CaculerTimeWait());
-
-             _heroController.isMoveX = false;
-
-             _heroController.StateIdle();
-
-             StartCoroutine(CheckPlayOnColum(PosXCurrentStick));
+            _heroController.isMoveX = true;
+            yield return new WaitForSeconds (_heroController.CaculerTimeWait()); // T = S/V  /// with distance = 3.3795 => V= 3 => t =1.2998
+            _heroController.isMoveX = false;
+            _heroController.StateIdle();
+            
+            // step 5: Check Player on column ?
+            StartCoroutine(CheckPlayerOnColumn(PosXCurrentStick));
     }
     IEnumerator CheckStickOnGoodPoint(float PosXCurrentStick )
     {
@@ -165,33 +150,28 @@ public class GameManager : Singleton<GameManager>
 
         if (isStickOnGoodPoint)
         {
-            GamePlay._instance.SetEnablePerfectTxt();
+            GamePlay._instance.UpdateScore(1);
 
+            // Get PlusOneTxt From Object Pool
+            GamePlay._instance.EnablePerfectTxt();
             Vector3 _currentPlushOneTxt = new Vector3(_nextCol._goodPoint.transform.position.x+0.1f, _nextCol._goodPoint.transform.position.y+0.1f, _nextCol._goodPoint.transform.position.z);
-           
             GameObject newPlusOne=  ObjectPooler._instance.SpawnFromPool("PlusOneTxt", _currentPlushOneTxt,Quaternion.identity);
-
             newPlusOne.GetComponent<PlusOneTxt>().DimAplaColor();
-
             SoundManager._instance.OnPlayAudio(SoundType.perfect);
-
             yield return new WaitForSeconds(2f);
 
+            // Add PlusOneTxt to Object Pool
             string tagColumn = "PlusOneTxt";
-
-            GamePlay._instance.SetDisablePerfectTxt();
+            GamePlay._instance.DisablePerfectTxt();
             ObjectPooler._instance.AddElement(tagColumn, newPlusOne);
         }
     }
-   IEnumerator CheckPlayOnColum(float PosXCurrentStick)
+   IEnumerator CheckPlayerOnColumn(float PosXCurrentStick)
     {
         _heroController.countClick = 0;
 
-        Debug.Log(" HeroController._instance.countClick " + _heroController.countClick);
-
         bool isPlayerOnColumn = _nextCol.PlayerOnColumn(PosXCurrentStick);
-
-        if (!isPlayerOnColumn || _heroController.IsFlipY() && _heroController.heroState == HeroState.living)
+        if ((!isPlayerOnColumn || _heroController.IsFlipY()) && _heroController.heroState == HeroState.living)
         {
              GameOver();
         }
@@ -202,14 +182,11 @@ public class GameManager : Singleton<GameManager>
 
                 GamePlay._instance.UpdateScore(1);
 
+                 // Move To EndPoint of Column
                 _heroController.StateRun();
-
                 _heroController.MoveToPoint(_nextCol._endPoint.transform.position);
-
                 yield return new WaitForSeconds(0.5f);
-
                 _nextCol.EnableGoodPoint();
-
                 _heroController.StateIdle();
 
                 SoundManager._instance.OnPlayAudio(SoundType.score);
@@ -218,22 +195,28 @@ public class GameManager : Singleton<GameManager>
                 {
                     GamePlay._instance.DimTutorial();
                 }
-
-                ChangeColumns();
-
-                BackGroundController._instance.FllowPlayer();   
-
-                CameraController._instance.FllowToPlayer();
-
-                BornNewMelonFromObjectPool();
-
-                yield return new WaitForSeconds(0.1f);
-
-                if(_currentSore%5==0)
+                if (_currentSore % 4 == 0)
                 {
                     BornBackGroundFromObjectPool();
                 }
-  
+                ChangeColumns();
+
+                BackGroundController._instance.FllowPlayer();   
+                CameraController._instance.FllowToPlayer();
+
+                yield return new WaitForSeconds(0.1f);
+
+                Vector3 RealPosNextCol = new Vector3(_nextColumn.transform.position.x - 3, _nextColumn.transform.position.y, 0);
+                _nextCol.MoveToTarget(RealPosNextCol);
+
+                yield return new WaitForSeconds(0.23f);
+
+                BornNewStick(_nextColumn);
+
+                _heroController.countClick = 0;
+                BornNewMelonFromObjectPool();
+
+                yield return new WaitForSeconds(0.1f);
             }
        
         }
@@ -242,27 +225,24 @@ public class GameManager : Singleton<GameManager>
 
     public void GameOver()
     {
-        
         _currentStick.Rotate90Degereeto180Degree();
         _heroController.MoveDown();
         SoundManager._instance.OnPlayAudio(SoundType.dead);
-        StartCoroutine(FadeGameOver());
+        StartCoroutine(WaitShakeCamera());
     }
-    IEnumerator FadeGameOver()
+    IEnumerator WaitShakeCamera()
     {
-        CameraController._instance.shake();
+        CameraController._instance.Shake();
         yield return new WaitForSeconds(0.8f);
         UiController._instance.EnableGameOverPanel();
     }
     void BornBackGroundFromObjectPool()
     {      
         // born new backgoround and add to object pool
+
         BackGroundController._instance.BornNewBGDynamic();
-
-        GameObject oldBackGround = BackGroundController._instance._backGrounDynamic.gameObject.transform.GetChild(0).gameObject;
-
+        GameObject oldBackGround = BackGroundController._instance.OldBackGrounDynamic();
         string tagColumn = "bg_"+BackGroundController._instance.idBg;
-
         ObjectPooler._instance.AddElement(tagColumn, oldBackGround);
 
     }
@@ -284,65 +264,52 @@ public class GameManager : Singleton<GameManager>
     {
          AddElementToObjectPool();
 
-        _isPlayerOnStick = false;
+        isPlayerOnStick = false;
 
         _currentColumn = _nextColumn;
-
          _nextColumn = BornNewColumn();
-
          UpdateValueOfColums();
     }
     private void UpdateValueOfColums()
     {
         _currentCol = _currentColumn.GetComponent<Column>();
-
         _currentCol.EnableStick();
-
         _currentStick = _currentCol._stick.GetComponent<Stick>();
-
         _nextCol = _nextColumn.GetComponent<Column>();
     }    
     void AddElementToObjectPool()
     {
         GameObject _currentStick = _allSticks.transform.GetChild(0).gameObject;
-
         _currentStick.transform.parent = _currentColumn.transform;
-
         _currentColumn.transform.parent = ObjectPooler._instance.gameObject.transform;
-
         string tagColumn = "Col" + _currentColumn.name;
-
         ObjectPooler._instance.AddElement(tagColumn, _currentColumn);
     }
 
     private GameObject BornNewMelonFromObjectPool()
     {
         float PosYMelon = (Random.RandomRange(1, 3) == 2) ? -1.928f : -2.19f;
-
         Vector3 PosNewMelon = new Vector3(Random.RandomRange(_currentCol.GetPosXRight()+0.25f, _nextCol.GetPosXleft()-0.25f), PosYMelon, 0);
-
         GameObject newObMelon = ObjectPooler._instance.SpawnFromPool("Melon", PosNewMelon, Quaternion.identity);
-
         newObMelon.transform.parent = _allFuit.transform;
-
         ObjectPooler._instance.AddElement("Melon", newObMelon);
-
         return newObMelon;
     }
 
     private GameObject BornNewColumn()
     {
         Vector3 LastPosChild = _allColumns.transform.GetChild(_allColumns.transform.childCount - 1).position;
-
-        Vector3 newPosChild = new Vector3(LastPosChild.x + Random.RandomRange(2.24f, 3.4f) , LastPosChild.y, 0);
+        Vector3 newPosChild = new Vector3(LastPosChild.x + Random.RandomRange(1.24f, 3.4f) +3f, LastPosChild.y, 0);
 
         int Column = Random.RandomRange(0, 5);
 
         GameObject newColumn = ObjectPooler._instance.SpawnFromPool("Col"+ Column, newPosChild, Quaternion.identity);
-
         newColumn.name = Column.ToString();
-
         newColumn.GetComponent<Column>().ResetColumn();
+        return newColumn;
+    }
+    private void BornNewStick(GameObject newColumn)
+    {
 
         GameObject _newStick = newColumn.GetComponent<Column>()._stick;
 
@@ -353,9 +320,8 @@ public class GameManager : Singleton<GameManager>
         // Set Scale for Stick
         _newStick.transform.localScale = new Vector3(0.004274033f, 0, 0);
 
-        return newColumn;
     }
-    public void SetCurrentSore(int Sore)
+    public void AddCurrentSore(int Sore)
     {
         _currentSore += Sore;
     }
@@ -372,5 +338,13 @@ public class GameManager : Singleton<GameManager>
     {
         return _countCurrentLemon;
     }
-
+    public void EnableSoundStickGrow()
+    {
+        SoundManager._instance.OnPlayAudio(SoundType.stick_grow_loop);
+        SoundManager._instance.audioFx.loop = true;
+    }
+    public bool IsPlayerOnNextCol(float PosXPlayer)
+    {
+        return _nextCol.PlayerOnColumn(PosXPlayer);
+    }
 }

@@ -8,7 +8,6 @@ public class GameHome : Singleton<GameHome>
     [SerializeField] Button _playBtn;
     [SerializeField] Button _shopeHeroBtn;
     [SerializeField] GameObject _shopHero;
-
     [SerializeField] Button _audioBtn;
     protected override void Awake()
     {
@@ -21,13 +20,15 @@ public class GameHome : Singleton<GameHome>
     {
         bool isActive = _audioBtn.gameObject.transform.GetChild(0).gameObject.activeSelf;
         _audioBtn.gameObject.transform.GetChild(0).gameObject.SetActive(!isActive);
+
+        AudioSource audioSource = SoundManager._instance.GetComponent<AudioSource>();
         if(!isActive)
         {
-            SoundManager._instance.GetComponent<AudioSource>().volume = 0f;
+            audioSource.volume = 0f;
         }
         else
         {
-            SoundManager._instance.GetComponent<AudioSource>().volume = 1f;
+            audioSource.volume = 1f;
         }
     }
     void OpenShope()

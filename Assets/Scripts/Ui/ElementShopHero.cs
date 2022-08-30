@@ -14,8 +14,6 @@ public class ElementShopHero : MonoBehaviour
     public GameObject _melonImg;
     public GameObject _backGroundImg;
     public bool _isBought;
-     
-
     private void Awake()
     {
         _buyHeroBtn.onClick.AddListener(SelectHero);
@@ -54,9 +52,10 @@ public class ElementShopHero : MonoBehaviour
         {
             if (_idHero <= 4)
             {
-                Vector3 oldPosHero = GameManager._instance._hero.transform.position;
+                Vector3 oldPosHero = GameManager._instance.hero.transform.position;
                 GameObject OldHero = GameObject.FindGameObjectWithTag("Player");
                 DestroyObject(OldHero);
+
                 GameObject newHero = Instantiate(Resources.Load("Hero/Object/Hero_" + _idHero, typeof(GameObject)), oldPosHero, Quaternion.identity) as GameObject;
                 GameManager._instance.UpLoadHero(newHero);
 
@@ -65,7 +64,7 @@ public class ElementShopHero : MonoBehaviour
             }
             else
             {
-                Debug.Log("don't have this object in resource");
+                Debug.Log("don't have this object in your resource");
             }
         }
     }

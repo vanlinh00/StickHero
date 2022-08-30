@@ -7,7 +7,7 @@ public class ShopHero : Singleton<ShopHero>
 {
     [SerializeField] Button _quiteBg;
     [SerializeField] GameObject _conTent;
-    [SerializeField] Text _amountMelon;
+    [SerializeField] Text _amountMelonTxt;
 
     public ElementShopHero[] _listElementShopHero;
     private int _toTalHero=8;
@@ -18,7 +18,7 @@ public class ShopHero : Singleton<ShopHero>
     }
     private void OnEnable()
     {
-        _amountMelon.text = GameManager._instance.GetCountCurrentLemon().ToString();
+        _amountMelonTxt.text = GameManager._instance.GetCountCurrentLemon().ToString();
         LoadShopeHero();
     }
    public void QuiteShop()
@@ -30,6 +30,7 @@ public class ShopHero : Singleton<ShopHero>
        for(int i=0;i<_listElementShopHero.Length;i++)
         {
             int PriceHero = Random.RandomRange(1, 3);
+
             var HeroImg = Resources.Load<Sprite>("Hero/Img/hero-"+i);
 
             if (DataPlayer.getInforPlayer().listIdHero.Contains(i))

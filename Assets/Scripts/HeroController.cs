@@ -18,7 +18,7 @@ public class HeroController : MonoBehaviour
 
     public float disTanceWithColX;  
 
-    private float _speed = 3f;
+    private float _speed = 2.4f;
 
     [SerializeField] Animator _animator;
     public enum HeroState
@@ -38,7 +38,6 @@ public class HeroController : MonoBehaviour
         heroState = HeroState.living;
         StateIdle();
     }
-
     private void Update()
     {
         CheckCantClick();
@@ -47,37 +46,42 @@ public class HeroController : MonoBehaviour
         {
             return;
         }
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonDown(0))
          {
               if (GameManager._instance.isPlaying /*&& GameManager._instance._isPlayerOnStick*/) 
             {
                 countClick++;
-                Debug.Log("countClick" + countClick);
+                if(countClick!=1)
+                {
+                    OnAudioFlip();
+                }  
             }
         }
         if (isMoveX)
         {
-            Debug.Log(countClick);
-
-            if (countClick % 2 == 0)
+            if (countClick % 2 == 0 && !GameManager._instance.IsPlayerOnNextCol(transform.position.x)) 
             {
                 FlipDown();
             }
-            else
-                {
+            if(countClick % 2 != 0 && !GameManager._instance.IsPlayerOnNextCol(transform.position.x))
+            {
                 FilpUp();
-                }
-                //3.3796
+             }
                 var step = _speed * Time.deltaTime;
-                transform.position = Vector3.MoveTowards(transform.position, _target, step);    
+                transform.position = Vector3.MoveTowards(transform.position, _target, step);
+            
                 if (DistanceWithPosXLeftCol() <= 0.15f && IsFlipY())
                 {
                     isMoveX = false;
-                    GameManager._instance.GameOver();
                     heroState = HeroState.die;
+                    GameManager._instance.GameOver();
                 }
         }
 
+    }
+    void OnAudioFlip()
+    {
+        AudioManager._instance.OnPlayAudio(SoundType.roll_up_down);
     }
     public void StateIdle()
     {
@@ -102,7 +106,7 @@ public class HeroController : MonoBehaviour
         _animator.SetBool("Kick", true);    
     }
     // t= 3.3795/ 3
-    // t= 3.2 / 3
+    // t= 3.2 / x
     public void CaculerSpeed()
     { 
        //  with distance = 3.3795 => V= 3
@@ -163,14 +167,14 @@ public class HeroController : MonoBehaviour
 
     public void FlipDown()
     {
-          transform.position = new Vector3(transform.position.x, -2.289f, transform.position.z);
-         transform.eulerAngles = new Vector3(0, -180f, -180f);
+        transform.eulerAngles = new Vector3(0, -180f, -180f);
+        transform.position = new Vector3(transform.position.x, -2.289f, transform.position.z);
     }
 
     public void FilpUp()
     {
-         transform.position = new Vector3(transform.position.x, -1.862f, transform.position.z);
-         transform.eulerAngles = new Vector3(0, 0, 0);
+        transform.eulerAngles = new Vector3(0, 0, 0);
+        transform.position = new Vector3(transform.position.x, -1.862f, transform.position.z);
     }
     public bool IsFlipY()
     {

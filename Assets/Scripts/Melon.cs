@@ -9,7 +9,7 @@ public class Melon : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {
             GamePlay._instance.UpdateAmountMeLon(1);
-            SoundManager._instance.OnPlayAudio(SoundType.eating_fruit);
+            AudioManager._instance.OnPlayAudio(SoundType.eating_fruit);
             gameObject.SetActive(false);
         }
     }

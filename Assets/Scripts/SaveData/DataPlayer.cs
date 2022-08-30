@@ -16,7 +16,6 @@ public class DataPlayer
 
         if (inforPlayer == null)
         {
-
             inforPlayer = new InforPlayer
             {
                 idLoadGameAgain = false,
@@ -28,13 +27,11 @@ public class DataPlayer
             SaveData();
         }
     }
-
     private static void SaveData()
     {
         var data = JsonUtility.ToJson(inforPlayer);
         PlayerPrefs.SetString(ALL_DATA, data);
     }
-
     public static void UpdataLoadGameAgain(bool IsLoadGameAgain)
     {
         inforPlayer.idLoadGameAgain = IsLoadGameAgain;

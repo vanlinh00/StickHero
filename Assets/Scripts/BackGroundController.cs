@@ -5,7 +5,8 @@ using UnityEngine;
 public class BackGroundController : Singleton<BackGroundController>
 {
     [SerializeField] GameObject _backGroundIdle;
-    public GameObject _backGrounDynamic;
+    [SerializeField] GameObject _backGrounDynamic;
+
     [SerializeField] float _timeMove;
     [SerializeField] float _distanceBeweentBg = 18.99258f;
     [SerializeField] float _distanceBeweentBg2 = 18.9f;
@@ -23,6 +24,10 @@ public class BackGroundController : Singleton<BackGroundController>
     private void Start()
     {
         _hero = GameObject.FindGameObjectWithTag("Player");
+    }
+    public GameObject OldBackGrounDynamic()
+    {
+       return _backGrounDynamic.gameObject.transform.GetChild(0).gameObject;
     }
     IEnumerator ChangeBackGround()
     {
@@ -71,6 +76,7 @@ public class BackGroundController : Singleton<BackGroundController>
     public void FllowPlayer()
     {
           UpdatePositionHero();
+
           Vector3 newPositionBackGrounIdle = new Vector3(_backGroundIdle.transform.position.x + _currentPosXHero - _oldPosXHero, _backGroundIdle.transform.position.y, _backGroundIdle.transform.position.z);
           StartCoroutine(Move(_backGroundIdle.transform, newPositionBackGrounIdle, _timeMove));
 

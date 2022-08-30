@@ -7,7 +7,7 @@ public class Stick : MonoBehaviour
     private float _speedScale= 0.26f;
     private float _smoothRotation =2.5f;
 
-    private int _countCollideStick = 0;
+    private int  _countCollideStick = 0;
     private bool _isCollideStickRight = false;
 
     private bool _isSpill = false;
@@ -51,7 +51,7 @@ public class Stick : MonoBehaviour
         if (!_isSpill180)
         {
             StartCoroutine(FadeRotation(-90f, -180f));
-                _isSpill180 = true;
+            _isSpill180 = true;
         }  
     }
 

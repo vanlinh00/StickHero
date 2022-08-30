@@ -9,8 +9,8 @@ public class PlusOneTxt : MonoBehaviour
    public void DimAplaColor()
     {
         StartCoroutine(FadeColor(250));
-    }
-    // 250/1   = 0.5/ x
+    } 
+    // 250/1   = 0.5/ x    => x= 0.004
     IEnumerator FadeColor(byte FadeColor)
     {  
         while (0 < FadeColor)

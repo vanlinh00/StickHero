@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraController : Singleton<CameraController>
 {
-    GameObject _hero;
+    [SerializeField] GameObject _hero;
     [SerializeField] GameObject _camera;
     [SerializeField] float _timeMove;
 
@@ -30,9 +30,8 @@ public class CameraController : Singleton<CameraController>
         Vector3 newPositionCamera = new Vector3(1.58f, 0, -10);
         StartCoroutine(Move(_camera.transform, newPositionCamera, 0.32f));
     }
-    public void shake()
+    public void Shake()
     {
-        //StartCoroutine(FadeShake(0.5f,1f));
         StartCoroutine(FadeShake());
     }
     IEnumerator FadeShake()
@@ -46,26 +45,11 @@ public class CameraController : Singleton<CameraController>
             transform.position = new Vector3(transform.position.x, transform.position.y - 0.05f, transform.position.z);
         }
     }
-    //public IEnumerator FadeShake(float duration, float magnitude)
-    //{
-    //    yield return new WaitForSeconds(0.2f);
-    //    Vector3 orignalPosition = transform.position;
-    //    float elapsed = 0f;
-    //    while (elapsed < duration)
-    //    {
-    //        float y = Random.Range(-0.1f, 0.1f) * magnitude;
-    //        transform.position = new Vector3(transform.position.x, y, -10f);
-    //        elapsed += Time.deltaTime;
-    //        yield return 0;
-    //    }
-    //    transform.position = orignalPosition;
-    //}
     public void SetCameraGPTOGP()
     {
         Vector3 newPositionCamera = new Vector3(1.58f, 0, -10);
         _camera.transform.position = newPositionCamera;
     }
-
     private void UpdatePositionHero()
     {
         _hero = GameObject.FindGameObjectWithTag("Player");

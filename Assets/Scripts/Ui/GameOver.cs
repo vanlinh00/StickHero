@@ -14,13 +14,14 @@ public class GameOver : Singleton<GameOver>
     [SerializeField] Text _currentScoreTxt;
     [SerializeField] Text _bestScoreTxt;
 
+    [SerializeField] CanvasGroup _canvasGroup;
     protected override void Awake()
     {
         base.Awake();
         _restartBt.onClick.AddListener(RestartGame);
         _homeBt.onClick.AddListener(GoToHome);
     }
-    private void OnEnable()
+    private void Start()
     {
         UpdateCurrentScore();
     }
@@ -54,6 +55,20 @@ public class GameOver : Singleton<GameOver>
             DataPlayer.UpdateBestScore(BestScore);
         }
         _bestScoreTxt.text = BestScore.ToString();
+    }
+    public void In()
+    {
+        StartCoroutine(FadeIn());
+    }
+    IEnumerator FadeIn()
+    {
+        float t = 0;
+        while(_canvasGroup.alpha<1)
+        {
+            yield return new WaitForEndOfFrame();
+            _canvasGroup.alpha = t;
+            t += Time.deltaTime*1.7f;
+        }
     }
   
 }
