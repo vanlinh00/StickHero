@@ -66,5 +66,5 @@ public class ObjectPooler : Singleton<ObjectPooler>
         }
 
         poolDictionary[tag].Enqueue(objectToSpawn);
-    }    
+    }
 }

@@ -1786,6 +1786,7 @@ MonoBehaviour:
   _hero: {fileID: 0}
   _camera: {fileID: 519420028}
   _timeMove: 0.29
+  _currentPosXHero: 0
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -1837,8 +1838,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 1.1, z: -10}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.5, y: 1.11, z: -10}
+  m_LocalScale: {x: 0, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -2246,7 +2247,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &737922530
 GameObject:
@@ -4332,7 +4333,7 @@ RectTransform:
   - {fileID: 13064550}
   - {fileID: 1420868610}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -4592,7 +4593,7 @@ Transform:
   - {fileID: 57205651}
   - {fileID: 1025499874}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1379079477
 MonoBehaviour:
@@ -4828,7 +4829,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1475017497}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4836,7 +4837,7 @@ Transform:
   - {fileID: 860884930}
   - {fileID: 752689330}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1475017500
 MonoBehaviour:
@@ -7111,7 +7112,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1850954479
 AudioSource:
@@ -7993,7 +7994,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &2107066679
 AudioSource:
@@ -8159,17 +8160,21 @@ MonoBehaviour:
       type: 3}
     size: 3
   - tag: Melon
-    prefab: {fileID: 2455428008105188652, guid: ca15f9b2cd3dcba4b8d6ed2496f455cf,
+    prefab: {fileID: 7914640197025367404, guid: ca15f9b2cd3dcba4b8d6ed2496f455cf,
       type: 3}
     size: 3
   - tag: bg_1
     prefab: {fileID: 5436093161443179138, guid: 4229b2638c9fb4c43970553e33fc8366,
       type: 3}
-    size: 10
+    size: 15
   - tag: bg_2
     prefab: {fileID: 7519687515005302696, guid: 79269c5894f06894d877f6b4a905a8a0,
       type: 3}
-    size: 10
+    size: 15
+  - tag: Particle
+    prefab: {fileID: 4317039086346338770, guid: e6e9654d515ad2640bd38521942a8876,
+      type: 3}
+    size: 2
 --- !u!4 &2111023203
 Transform:
   m_ObjectHideFlags: 0
@@ -8182,7 +8187,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2111648972
 GameObject:

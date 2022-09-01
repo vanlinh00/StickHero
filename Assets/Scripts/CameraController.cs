@@ -8,7 +8,7 @@ public class CameraController : Singleton<CameraController>
     [SerializeField] GameObject _camera;
     [SerializeField] float _timeMove;
 
-    private float _currentPosXHero = 0f;
+    [SerializeField] float _currentPosXHero ;
     private float _oldPosXHero = 0f;
 
     protected override void Awake()

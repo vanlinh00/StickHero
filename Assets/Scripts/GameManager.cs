@@ -15,7 +15,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] GameObject _allColumns;
     [SerializeField] GameObject _allSticks;
     [SerializeField] GameObject _allFuit;
-
+    
     private Column _currentCol;
     private Column _nextCol;
 
@@ -29,6 +29,8 @@ public class GameManager : Singleton<GameManager>
 
     public bool isPlayerOnStick = false;
     private bool _isStick_grow_loop = false;
+
+    private int _countTimeTut = 0;
 
     protected override void Awake()
     {
@@ -118,7 +120,7 @@ public class GameManager : Singleton<GameManager>
     {        
             // step 1: Hero kick this stick
             _heroController.StateKick();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             SoundManager._instance.OnPlayAudio(SoundType.kick);
              
              // step 2: Stick is spilled
@@ -177,28 +179,18 @@ public class GameManager : Singleton<GameManager>
         }
         else
         {
-            if (_heroController.heroState == HeroState.living)    
+            if (_heroController.heroState == HeroState.living)
             {
 
+                SoundManager._instance.OnPlayAudio(SoundType.score);
                 GamePlay._instance.UpdateScore(1);
 
-                 // Move To EndPoint of Column
+                // Move To EndPoint of Column
                 _heroController.StateRun();
                 _heroController.MoveToPoint(_nextCol._endPoint.transform.position);
                 yield return new WaitForSeconds(0.5f);
                 _nextCol.EnableGoodPoint();
                 _heroController.StateIdle();
-
-                SoundManager._instance.OnPlayAudio(SoundType.score);
-
-                if (_currentSore == 1)
-                {
-                    GamePlay._instance.DimTutorial();
-                }
-                if (_currentSore % 4 == 0)
-                {
-                    BornBackGroundFromObjectPool();
-                }
                 ChangeColumns();
 
                 BackGroundController._instance.FllowPlayer();   
@@ -216,6 +208,13 @@ public class GameManager : Singleton<GameManager>
                 _heroController.countClick = 0;
                 BornNewMelonFromObjectPool();
 
+                _countTimeTut++;
+                if (_countTimeTut == 1)
+                {
+                    GamePlay._instance.DimTutorial();
+                }
+                BornBackGroundFromObjectPool();
+           
                 yield return new WaitForSeconds(0.1f);
             }
        
@@ -237,14 +236,16 @@ public class GameManager : Singleton<GameManager>
         UiController._instance.EnableGameOverPanel();
     }
     void BornBackGroundFromObjectPool()
-    {      
-        // born new backgoround and add to object pool
+    {
+        Vector3 PosLastChild = BackGroundController._instance.GetPosXLastChildBGDynamic();
 
-        BackGroundController._instance.BornNewBGDynamic();
-        GameObject oldBackGround = BackGroundController._instance.OldBackGrounDynamic();
-        string tagColumn = "bg_"+BackGroundController._instance.idBg;
-        ObjectPooler._instance.AddElement(tagColumn, oldBackGround);
-
+        if (Mathf.Abs(_heroController.transform.position.x - PosLastChild.x) < 9f)
+        {
+            BackGroundController._instance.BornNewBGDynamic();
+            GameObject oldBackGround = BackGroundController._instance.OldBackGrounDynamic();
+            string tagColumn = "bg_" + BackGroundController._instance.idBg;
+            ObjectPooler._instance.AddElement(tagColumn, oldBackGround);
+        }
     }
     public IEnumerator PlayerGoToEndPointOnCurrentCol()
     {
@@ -263,9 +264,7 @@ public class GameManager : Singleton<GameManager>
     void ChangeColumns()
     {
          AddElementToObjectPool();
-
         isPlayerOnStick = false;
-
         _currentColumn = _nextColumn;
          _nextColumn = BornNewColumn();
          UpdateValueOfColums();

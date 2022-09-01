@@ -198,4 +198,22 @@ public class HeroController : MonoBehaviour
         }
 
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Melon"))
+        {
+            GamePlay._instance.UpdateAmountMeLon(1);
+            AudioManager._instance.OnPlayAudio(SoundType.eating_fruit);
+            collision.gameObject.SetActive(false);
+            GameObject particle = ObjectPooler._instance.SpawnFromPool("Particle", collision.gameObject.transform.position, Quaternion.identity);
+            StartCoroutine(WaitTimeAddParToPool(particle));
+        }
+    }
+    IEnumerator WaitTimeAddParToPool(GameObject ParticleObj)
+    {
+        yield return new WaitForSeconds(0.4f);
+        ParticleObj.SetActive(false);
+        ObjectPooler._instance.AddElement("Particle", ParticleObj);
+    }
+
 }

@@ -29,6 +29,10 @@ public class BackGroundController : Singleton<BackGroundController>
     {
        return _backGrounDynamic.gameObject.transform.GetChild(0).gameObject;
     }
+    public Vector3 GetPosXLastChildBGDynamic()
+    {
+        return _backGrounDynamic.gameObject.transform.GetChild(_backGrounDynamic.gameObject.transform.childCount-1).gameObject.transform.position;
+    }
     IEnumerator ChangeBackGround()
     {
         yield return new WaitForEndOfFrame();
@@ -105,6 +109,10 @@ public class BackGroundController : Singleton<BackGroundController>
 
         Vector3 newPositionBackGroundDy = new Vector3(0, -1.12f, 0);
         _backGrounDynamic.transform.position = newPositionBackGroundDy;
+    }
+    public float GetPosXBGDynamicleft()
+    {
+        return _backGrounDynamic.transform.position.x + 9.49629f;
     }
     IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
     {
