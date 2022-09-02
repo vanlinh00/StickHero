@@ -11,7 +11,7 @@ public class GameControllerG2 : MonoBehaviour
     [SerializeField] HeroG2 _hero;
     [SerializeField] StickG2 _stick;
    
-    private bool _isPill = false;
+    private bool _isStickPill = false;
 
     void Update()
     {
@@ -20,14 +20,14 @@ public class GameControllerG2 : MonoBehaviour
         //{
         //    return;
         //}
-        if (!_isPill)
+        if (!_isStickPill)
         {
             _stick.GrowUp();
             _stick.GetDown();
         }
-        if (Input.GetMouseButtonDown(0)&& !_isPill)
+        if (Input.GetMouseButtonDown(0)&& !_isStickPill)
         {
-            _isPill = true;
+            _isStickPill = true;
             _stick.Spill();
             StartCoroutine(HeroSPill());
         }   
@@ -53,8 +53,14 @@ public class GameControllerG2 : MonoBehaviour
         Vector3 newPosHero = columnsManager.GetPosHeadNextCol();
         yield return new WaitForSeconds(0.1f);
 
-        _hero.MoveToTarget(newPosHero,1f);
-        yield return new WaitForSeconds(1f);
+        //_hero.MoveToTarget(newPosHero,1f);
+        _hero.UpdateToMovement(newPosHero);
+
+        _hero._isMove = true;
+
+        yield return new WaitForSeconds(1);
+
+        //_hero._isMove = false;
 
         CameraController._instance.FllowToPlayer();
 
@@ -70,7 +76,7 @@ public class GameControllerG2 : MonoBehaviour
 
         melonManger.BornNewMelon(disStickAndNextCol, disStickAndNextCol, PosA);
 
-        _isPill = false;
+        _isStickPill = false;
     }
 
 }
