@@ -22,6 +22,7 @@ public class GameManager : Singleton<GameManager>
     private Stick _currentStick;
 
     public bool isPlaying;
+
     private bool _canClick = true;
 
     private int _currentSore;

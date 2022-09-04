@@ -13,12 +13,13 @@ public class BackGroundController : Singleton<BackGroundController>
 
     [SerializeField] GameObject _hero;
 
-    private float _currentPosXHero = 0f;
+    public float _currentPosXHero = 0f;
     private float _oldPosXHero = 0f;
     public float idBg = 1;
     protected override void Awake()
     {
         base.Awake();
+       // DontDestroyOnLoad(this.gameObject);
         StartCoroutine(ChangeBackGround());
     }
     private void Start()
@@ -81,7 +82,7 @@ public class BackGroundController : Singleton<BackGroundController>
     {
           UpdatePositionHero();
 
-          Vector3 newPositionBackGrounIdle = new Vector3(_backGroundIdle.transform.position.x + _currentPosXHero - _oldPosXHero, _backGroundIdle.transform.position.y, _backGroundIdle.transform.position.z);
+          Vector3 newPositionBackGrounIdle = new Vector3(_backGroundIdle.transform.position.x + Mathf.Abs( Mathf.Abs( _currentPosXHero) - Mathf.Abs(_oldPosXHero)), _backGroundIdle.transform.position.y, _backGroundIdle.transform.position.z);
           StartCoroutine(Move(_backGroundIdle.transform, newPositionBackGrounIdle, _timeMove));
 
           Vector3 newPositionBackGrounDynamic = new Vector3(_backGrounDynamic.transform.position.x + _currentPosXHero - _oldPosXHero, _backGrounDynamic.transform.position.y, _backGrounDynamic.transform.position.z);
@@ -114,6 +115,7 @@ public class BackGroundController : Singleton<BackGroundController>
     {
         return _backGrounDynamic.transform.position.x + 9.49629f;
     }
+  
     IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
     {
         var passed = 0f;

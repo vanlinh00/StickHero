@@ -10,9 +10,9 @@ public class MelonG2 : MonoBehaviour
     // HeightStick = distance x stick to x nextcol
     public Vector3 CaculerPosMelon(float AB, float HeightStick, Vector3 PosHeadNextCol)
     {
-        float BC = HeightStick + d;
+        float BC = HeightStick+d/2;
         float AC = Mathf.Sqrt(BC * BC - AB * AB);     // AB=  distance x stick to x nextcol
-        return new Vector3(PosHeadNextCol.x - (Random.RandomRange(d/4,d/2)), Random.RandomRange(-AC+(d/(1.3f)), PosHeadNextCol.y), 0);
+        return new Vector3(PosHeadNextCol.x -d/2+ (Random.RandomRange(d/4,d/2)-0.2f),PosHeadNextCol.y+Random.RandomRange(-AC,AC), 0);
     }
     public float GetLocaleScale()
     {
@@ -34,6 +34,7 @@ public class MelonG2 : MonoBehaviour
             StartCoroutine(TimeWait());
         }
     }
+    
     IEnumerator TimeWait()
     {
         yield return new WaitForSeconds(1f);

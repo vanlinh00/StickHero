@@ -13,7 +13,7 @@ public class UIControllerG2 : MonoBehaviour
     }
     void RestartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(0);
     }
 
 }

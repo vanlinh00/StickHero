@@ -18,20 +18,43 @@ public class StickG2 : MonoBehaviour
     [SerializeField] TrailRenderer trailRenderer;
 
     [SerializeField] float currentDegree;
+
     [SerializeField] float degree;
 
     [SerializeField] Vector3 _oldlocalScale;
 
+   
 
+    float timeCount = 0.0f;
+    public bool isStickSPill = false;
+
+    public bool _isCollisionMelon = false;
+    public bool _isCollisionCol = false;
+    public Transform a;
     private void Start()
     {
         _isScaleMax = true;
         _isScaleMin = false;
         trailRenderer.gameObject.SetActive(false);
     }
-    // Update is called once per frame
 
-   public void GrowUp()
+    private void Update()
+    {
+        if (isStickSPill && !_isCollisionCol)
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, a.rotation, timeCount);
+            timeCount = timeCount + Time.deltaTime;
+            Debug.Log(timeCount + " timeCount" +"\n");
+            Debug.Log(transform.rotation.z + " rotation");
+        }
+
+    }
+    public void UpdateRatation()
+    {
+        timeCount = 0.0f;
+    }
+
+    public void GrowUp()
     {
         if (transform.localScale.y <= _maxScale && _isScaleMax)
         {
@@ -57,12 +80,13 @@ public class StickG2 : MonoBehaviour
         }
         transform.localScale = newScale;
     }
+
     public void Spill()
     {
         CaculerStartWidthTrail();
         StartCoroutine(FadeRotation(currentDegree, degree));
     }
-                               //     150              -90           => 240  /19  * Time*deltaTime
+    //     150              -90           => 240  /19  * Time*deltaTime
     IEnumerator FadeRotation(float currentDegree, float degree)
     {
         float t = currentDegree;
@@ -78,14 +102,26 @@ public class StickG2 : MonoBehaviour
     // x =?    y = ok     => x     
     public void CaculerStartWidthTrail()
     {
-        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f;
+        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f -0.1f;
         trailRenderer.gameObject.SetActive(true);
     }
-   
     public void ResetStick()
     {
         transform.rotation = Quaternion.Euler(0, 0, 0);
         transform.localScale = _oldlocalScale;
         trailRenderer.gameObject.SetActive(false);
+    }
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.CompareTag("Melon"))
+        {
+            _isCollisionMelon = true;
+        }
+
+        if (collision.gameObject.CompareTag("Column"))
+        {
+            _isCollisionCol = true;
+        }
+
     }
 }

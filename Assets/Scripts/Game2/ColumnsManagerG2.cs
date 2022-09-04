@@ -9,24 +9,49 @@ public class ColumnsManagerG2 : MonoBehaviour
     {
         int LastNumbCol = transform.childCount - 1;
         Vector3 PosChildColumn = transform.GetChild(LastNumbCol).transform.position;
-        Vector3 NewPosCol = new Vector3(PosChildColumn.x + Random.RandomRange(2.12f, 4f), PosChildColumn.y, 0);
+        Vector3 NewPosCol = new Vector3(PosChildColumn.x + Random.RandomRange(2.12f, 3.5f)+4f, -6.585f + Random.RandomRange(-1f,0f), 0);
         GameObject NewCol = ObjectPooler._instance.SpawnFromPool("Column", NewPosCol, Quaternion.identity);
+        _nextColumn = NewCol;
         NewCol.transform.parent = transform;
 
         ObjectPooler._instance.AddElement("Column", transform.GetChild(0).transform.gameObject);
         transform.GetChild(0).transform.gameObject.transform.parent = ObjectPooler._instance.transform;
+
+        Vector3 NewPos = new Vector3(NewCol.transform.position.x-4f, NewPosCol.y , 0);
+        StartCoroutine(WaitTimeNextColMove(NewPos, 0.2f));
+    }
+    IEnumerator WaitTimeNextColMove(Vector3 Target, float TimeMove)
+    {
+        yield return new WaitForSeconds(0.2f);
+        NextColMoveToTarget(Target, TimeMove);
+    }
+    public void NextColMoveToTarget(Vector3 Target, float TimeMove)
+    {
+         StartCoroutine(Move(_nextColumn.transform, Target, TimeMove));
+    }
+    IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
+    {
+        var passed = 0f;
+        var init = CurrentTransform.transform.position;
+        while (passed < TotalTime)
+        {
+            passed += Time.deltaTime;
+            var normalized = passed / TotalTime;
+            var current = Vector3.Lerp(init, Target, normalized);
+            CurrentTransform.position = current;
+            yield return null;
+        }
+
     }
     public Vector3 GetPosHeadNextCol()
     {
         int LastNumbCol = transform.childCount - 1;
          _nextColumn = transform.GetChild(LastNumbCol).gameObject;
         float PosYHead = _nextColumn.transform.position.y+ (_nextColumn.transform.localScale.y * 18.9f) / 2;
-        return new Vector3(_nextColumn.transform.position.x, PosYHead+ 0.20199999f- 0.04899999f, 0);
+        return new Vector3(_nextColumn.transform.position.x, PosYHead, 0);
     }
     public GameObject GetNextColum()
     {
-        int LastNumbCol = transform.childCount - 1;
-        _nextColumn = transform.GetChild(LastNumbCol).gameObject;
         return _nextColumn;
     }
 }

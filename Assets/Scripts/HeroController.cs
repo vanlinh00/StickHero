@@ -170,7 +170,6 @@ public class HeroController : MonoBehaviour
         transform.eulerAngles = new Vector3(0, -180f, -180f);
         transform.position = new Vector3(transform.position.x, -2.289f, transform.position.z);
     }
-
     public void FilpUp()
     {
         transform.eulerAngles = new Vector3(0, 0, 0);

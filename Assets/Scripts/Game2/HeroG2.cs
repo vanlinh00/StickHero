@@ -8,73 +8,98 @@ public class HeroG2 : MonoBehaviour
     [SerializeField] float _currentDegree;
     [SerializeField] float _targetDegree;
 
-    // public Vector3 Target
-    private float _animation;
-
-    [SerializeField] Vector2 _oldPos;
-    public Vector2 _target;
+    public Vector3 _target;
     public bool _isMove = false;
+    public float duration;
+
+    Parabola parabola;
+    Vector3 startPos;
+    float preTime;
+
+    public bool isHeroSpill = false;
+    public Transform a;
+    float timeCount = 0.0f;
+
+    [SerializeField] Animator _animator;
+    [SerializeField] StickG2 _stick;
+    [SerializeField] GameObject _stickClone;
+
+    [SerializeField] GameObject _hero;
     private void Update()
-    {   
-       if(_isMove)
-        {
-            _animation += Time.deltaTime;
-            Debug.Log("_moveSpeed" + _animation);
-
-            _animation = _animation % 5f;
-            Debug.Log("_moveSpeed % 5f" + _animation);
-            Debug.Log("_moveSpeed / 5f" + _animation / 5f);
-
-            transform.position = MathParabola.Parabola(_oldPos,_target, 1f, (_animation / 5f)*10f);
-            if(Vector2.Distance(transform.position,_target)==0f)
+    {
+        if (_isMove)
+        {    
+            if (((Time.time - preTime) / duration) <= 1)
             {
-                _isMove = false;
+                StateRotate();
+                parabola.Move(transform, startPos, _target, (Time.time - preTime) / duration);
             }
+            else
+            {
+                transform.position = _target; 
+                StateIdle();
+            }
+
         }
+       
+        if (isHeroSpill)
+        {
+            _hero.transform.rotation = Quaternion.Lerp(_hero.transform.rotation, a.rotation, timeCount);
+            timeCount = timeCount + Time.deltaTime/2;
+        }
+    }
+  public void EnableAnimator(bool res)
+    {
+        _animator.gameObject.SetActive(res);
+    }
+   public void StateIdle()
+    {
+        _stick.gameObject.SetActive(true);
+        _animator.SetBool("Dance", false);
+        _animator.SetBool("Rotate", false);
+        _stickClone.SetActive(false);
 
     }
-    public void Spill()
+    public void StateDance()
     {
-        StartCoroutine(FadeRotation(_currentDegree, _targetDegree));
+        _animator.SetBool("Dance", true);
+        _stickClone.SetActive(true);
+        _stick.gameObject.SetActive(false);
     }
-    public void UpdateToMovement(Vector2 Target)
+    public void StateRotate()
     {
-        _animation = 10f;
-        _oldPos = transform.position;
+        _stick.gameObject.SetActive(false);
+        _stickClone.SetActive(true);
+        _animator.SetBool("Dance", false);
+        _animator.SetBool("Rotate", true);
+    }
+    public void UpdateMoveMent(Vector3 Target, float Duration)
+    {
         _target = Target;
+        duration = Duration;
+        preTime = Time.time;
+        startPos = transform.position;
+        parabola = new Parabola(1);
     }
-    IEnumerator FadeRotation(float currentDegree, float targetDegree)
-    {
-        float t = currentDegree;
-        while (t >= targetDegree)
-        {
-            yield return new WaitForEndOfFrame();
-            t -= _smoothRotation;
-            Quaternion target = Quaternion.Euler(transform.rotation.x, transform.rotation.y, (t > targetDegree) ? t : targetDegree);
-            transform.rotation = target;
-        }
-    }
-    public void MoveToTarget(Vector3 Target,float TimeMove)
-    {
-       // StartCoroutine(Move(transform, Target, TimeMove));
+    //public void Spill()
+    //{
+    //    StartCoroutine(FadeRotation(_currentDegree, _targetDegree));
+    //}
+    //IEnumerator FadeRotation(float currentDegree, float targetDegree)
+    //{
+    //    float t = currentDegree;
+    //    while (t >= targetDegree)
+    //    {
+    //        yield return new WaitForEndOfFrame();
+    //        t -= _smoothRotation;
+    //        Quaternion target = Quaternion.Euler(transform.rotation.x, transform.rotation.y, (t > targetDegree) ? t : targetDegree);
+    //        transform.rotation = target;
+    //    }
+    //}
 
-    }
-    IEnumerator Move(Transform CurrentTransform, Vector3 Target, float TotalTime)
-    {
-        var passed = 0f;
-        var init = CurrentTransform.transform.position;
-        while (passed < TotalTime)
-        {
-            passed += Time.deltaTime;
-            var normalized = passed / TotalTime;
-            var current = Vector3.Lerp(init, Target, normalized);
-            CurrentTransform.position = current;
-            yield return null;
-        }
-
-    }
     public void ResetHero()
     {
         transform.rotation = Quaternion.Euler(0, 0, 0);
+        _hero.transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 }
