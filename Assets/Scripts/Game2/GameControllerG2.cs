@@ -14,6 +14,7 @@ public class GameControllerG2 : MonoBehaviour
     private bool _isStickPill = false;
 
     private int _currentScore = 0;
+
     void Update()
     {
         if (!_isStickPill)
@@ -27,7 +28,6 @@ public class GameControllerG2 : MonoBehaviour
             _stick.CaculerStartWidthTrail();
 
             _isStickPill = true;
-
             _stick.isStickSPill = true;
 
            StartCoroutine(HeroSPill());
@@ -49,10 +49,9 @@ public class GameControllerG2 : MonoBehaviour
     {
         yield return new WaitForSeconds(0.30059631417f);
         _hero.isHeroSpill = false;
-       
+   
         _stick.ResetStick();
         _hero.ResetHero();
-
 
         if (_stick._isCollisionMelon)
         {
@@ -60,36 +59,43 @@ public class GameControllerG2 : MonoBehaviour
             Vector3 NewPosHero = new Vector3(PosHeadCol.x+ 0.141f, PosHeadCol.y + 0.092534f, 0);
 
             _hero._isMove = true;
+            _hero.StateRotate();
             _hero.UpdateMoveMent(NewPosHero, 0.5f);
             yield return new WaitForSeconds(0.5f);
             _hero._isMove = false;
 
+
+            _stick.gameObject.SetActive(true);
+            _hero.stickClone.SetActive(false);
+            _hero.StateIdle();
+
             CameraController._instance.FllowToPlayer();
             _currentScore++;
-
              BackGroundController._instance.FllowPlayer();
 
             yield return new WaitForSeconds(0.3f);
             columnsManager.BornNewColumn();
             yield return new WaitForSeconds(0.5f);
+
             float disStickAndNextCol = columnsManager.GetNextColum().transform.position.x - _hero.transform.position.x;
             Vector3 PosA = new Vector3(columnsManager.GetNextColum().transform.position.x, _hero.transform.position.y, 0);
 
             melonManger.BornNewMelon(disStickAndNextCol, disStickAndNextCol, PosA);
 
             _stick._isCollisionMelon = false;
-            _stick._isCollisionCol = false;
-            _stick.gameObject.SetActive(true);
+
+            _isStickPill = false;
         }
         else
         {
             _hero.StateDance();
             yield return new WaitForSeconds(1f);
             _hero.StateIdle();
-            _stick._isCollisionCol = false;
+
+            _isStickPill = false;
         }
-        _stick.ResetStick();
-        _isStickPill = false;
+
+     
         BornBackGroundFromObjectPool();
     }
     void BornBackGroundFromObjectPool()

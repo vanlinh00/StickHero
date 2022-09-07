@@ -7,8 +7,8 @@ public class StickG2 : MonoBehaviour
     [SerializeField] float _speedScale;
     [SerializeField] float _smoothRotation;
 
-    private float _maxScale = 0.25f;
-    private float _minScale = 0.009f;
+    private float _maxScale = 0.25f;      //  0.008999998  =>0.17009997732
+    private float _minScale = 0.009f;   //                   3.5
 
     private bool _isScaleMax = false;
     private bool _isScaleMin = false;
@@ -23,13 +23,12 @@ public class StickG2 : MonoBehaviour
 
     [SerializeField] Vector3 _oldlocalScale;
 
-   
-
     float timeCount = 0.0f;
+
     public bool isStickSPill = false;
 
     public bool _isCollisionMelon = false;
-    public bool _isCollisionCol = false;
+
     public Transform a;
     private void Start()
     {
@@ -40,12 +39,10 @@ public class StickG2 : MonoBehaviour
 
     private void Update()
     {
-        if (isStickSPill && !_isCollisionCol)
+        if (isStickSPill)
         {
             transform.rotation = Quaternion.Lerp(transform.rotation, a.rotation, timeCount);
             timeCount = timeCount + Time.deltaTime;
-            Debug.Log(timeCount + " timeCount" +"\n");
-            Debug.Log(transform.rotation.z + " rotation");
         }
 
     }
@@ -116,11 +113,6 @@ public class StickG2 : MonoBehaviour
         if(collision.gameObject.CompareTag("Melon"))
         {
             _isCollisionMelon = true;
-        }
-
-        if (collision.gameObject.CompareTag("Column"))
-        {
-            _isCollisionCol = true;
         }
 
     }

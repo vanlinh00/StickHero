@@ -22,7 +22,7 @@ public class HeroG2 : MonoBehaviour
 
     [SerializeField] Animator _animator;
     [SerializeField] StickG2 _stick;
-    [SerializeField] GameObject _stickClone;
+    public GameObject stickClone;
 
     [SerializeField] GameObject _hero;
     private void Update()
@@ -31,17 +31,13 @@ public class HeroG2 : MonoBehaviour
         {    
             if (((Time.time - preTime) / duration) <= 1)
             {
-                StateRotate();
                 parabola.Move(transform, startPos, _target, (Time.time - preTime) / duration);
             }
             else
             {
                 transform.position = _target; 
-                StateIdle();
             }
-
         }
-       
         if (isHeroSpill)
         {
             _hero.transform.rotation = Quaternion.Lerp(_hero.transform.rotation, a.rotation, timeCount);
@@ -54,22 +50,21 @@ public class HeroG2 : MonoBehaviour
     }
    public void StateIdle()
     {
-        _stick.gameObject.SetActive(true);
         _animator.SetBool("Dance", false);
         _animator.SetBool("Rotate", false);
-        _stickClone.SetActive(false);
-
     }
     public void StateDance()
     {
         _animator.SetBool("Dance", true);
-        _stickClone.SetActive(true);
-        _stick.gameObject.SetActive(false);
+
+        //_stickClone.SetActive(true);
+        //_stick.gameObject.SetActive(false);
     }
     public void StateRotate()
     {
-        _stick.gameObject.SetActive(false);
-        _stickClone.SetActive(true);
+       // _stick.gameObject.SetActive(false);
+        //_stickClone.SetActive(true);
+
         _animator.SetBool("Dance", false);
         _animator.SetBool("Rotate", true);
     }
