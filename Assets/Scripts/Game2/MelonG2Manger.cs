@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MelonG2Manger : MonoBehaviour
 {
- public  void BornNewMelon(float AB, float HeightStick, Vector3 PosA)
+ public void BornNewMelon(float AB, float HeightStick, Vector3 PosA)
     {
         GameObject NewMeLon = ObjectPooler._instance.SpawnFromPool("Melon", ObjectPooler._instance.transform.position, Quaternion.identity);
         MelonG2 Melon = NewMeLon.GetComponent<MelonG2>();

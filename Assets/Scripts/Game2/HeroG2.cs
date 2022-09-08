@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ public class HeroG2 : MonoBehaviour
 
     Parabola parabola;
     Vector3 startPos;
-    float preTime;
+    private float preTime;
 
     public bool isHeroSpill = false;
     public Transform a;
@@ -22,7 +23,7 @@ public class HeroG2 : MonoBehaviour
 
     [SerializeField] Animator _animator;
     [SerializeField] StickG2 _stick;
-    public GameObject stickClone;
+    [SerializeField] GameObject _stickClone;
 
     [SerializeField] GameObject _hero;
     private void Update()
@@ -32,10 +33,12 @@ public class HeroG2 : MonoBehaviour
             if (((Time.time - preTime) / duration) <= 1)
             {
                 parabola.Move(transform, startPos, _target, (Time.time - preTime) / duration);
+                StateRotate();
             }
             else
             {
-                transform.position = _target; 
+                transform.position = _target;
+                StateIdle();
             }
         }
         if (isHeroSpill)
@@ -50,6 +53,10 @@ public class HeroG2 : MonoBehaviour
     }
    public void StateIdle()
     {
+        _stickClone.SetActive(false);
+        _stick.gameObject.SetActive(true);
+        _stick.ResetStick();
+
         _animator.SetBool("Dance", false);
         _animator.SetBool("Rotate", false);
     }
@@ -57,13 +64,13 @@ public class HeroG2 : MonoBehaviour
     {
         _animator.SetBool("Dance", true);
 
-        //_stickClone.SetActive(true);
-        //_stick.gameObject.SetActive(false);
+        _stickClone.SetActive(true);
+        _stick.gameObject.SetActive(false);
     }
     public void StateRotate()
     {
-       // _stick.gameObject.SetActive(false);
-        //_stickClone.SetActive(true);
+        _stick.gameObject.SetActive(false);
+        _stickClone.SetActive(true);
 
         _animator.SetBool("Dance", false);
         _animator.SetBool("Rotate", true);
@@ -91,7 +98,11 @@ public class HeroG2 : MonoBehaviour
     //        transform.rotation = target;
     //    }
     //}
-
+    public void MoveDown()
+    {
+        Vector3 Target = new Vector3(transform.position.x, transform.position.y - 5f, 0);
+        transform.DOMove(Target, 0.2f);
+    }
     public void ResetHero()
     {
         transform.rotation = Quaternion.Euler(0, 0, 0);

@@ -4,16 +4,26 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIControllerG2 : MonoBehaviour
+public class UIControllerG2 : Singleton<UIControllerG2>
 {
-    [SerializeField] Button _restartBtn; 
-    private void Awake()
+    [SerializeField] GameObject _gameOver;
+    [SerializeField] Button _restartbtn;
+    protected override void Awake()
     {
-        _restartBtn.onClick.AddListener(RestartGame);   
+        base.Awake();
+        _restartbtn.onClick.AddListener(RestartGame);
     }
     void RestartGame()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
+    }
+    public void EnableGameOver()
+    {
+        _gameOver.SetActive(true);
+    }
+    public void DisableGameOver()
+    {
+        _gameOver.SetActive(false);
     }
 
 }

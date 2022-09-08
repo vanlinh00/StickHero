@@ -54,4 +54,5 @@ public class ColumnsManagerG2 : MonoBehaviour
     {
         return _nextColumn;
     }
+   
 }

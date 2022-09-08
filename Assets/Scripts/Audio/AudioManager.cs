@@ -2,14 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : Singleton<AudioManager>
+public class AudioManager : MonoBehaviour
 {
-  
+    public static AudioManager _instance;
     public AudioSource audioFx;
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+        else
+        {
+            _instance = this;
+        }
+        DontDestroyOnLoad(this);
     }
+
     private void OnValidate()
     {
         if (audioFx == null)

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class StickG2 : MonoBehaviour
 
     private float _maxScale = 0.25f;      //  0.008999998  =>0.17009997732
     private float _minScale = 0.009f;   //                   3.5
+    private float _height = 18.9f;
 
     private bool _isScaleMax = false;
     private bool _isScaleMin = false;
@@ -16,41 +18,39 @@ public class StickG2 : MonoBehaviour
     Vector3 newScale = new Vector3();
 
     [SerializeField] TrailRenderer trailRenderer;
-
-    [SerializeField] float currentDegree;
-
-    [SerializeField] float degree;
-
     [SerializeField] Vector3 _oldlocalScale;
 
+    private float _angleRotaion = 0f;
     float timeCount = 0.0f;
+    //public float _speed = 1f;
 
     public bool isStickSPill = false;
 
     public bool _isCollisionMelon = false;
 
-    public Transform a;
+    public Transform Target;
+    
     private void Start()
     {
         _isScaleMax = true;
         _isScaleMin = false;
         trailRenderer.gameObject.SetActive(false);
     }
-
     private void Update()
     {
-        if (isStickSPill)
-        {
-            transform.rotation = Quaternion.Lerp(transform.rotation, a.rotation, timeCount);
-            timeCount = timeCount + Time.deltaTime;
-        }
-
+    //    if (isStickSPill)
+    //    {
+    //        transform.rotation = Quaternion.Lerp(transform.rotation, Target.rotation, timeCount /** _speed*/);
+    //        timeCount = timeCount + Time.deltaTime;
+    //    }
     }
-    public void UpdateRatation()
+    public void UpdateRatation(float RotationZ)
     {
-        timeCount = 0.0f;
+        _angleRotaion = RotationZ;
+        // _speed = Mathf.Abs(165 / RotationZ);
+        //timeCount = 0.0f;
+        Target.eulerAngles = new Vector3(0, 0, RotationZ);
     }
-
     public void GrowUp()
     {
         if (transform.localScale.y <= _maxScale && _isScaleMax)
@@ -81,20 +81,37 @@ public class StickG2 : MonoBehaviour
     public void Spill()
     {
         CaculerStartWidthTrail();
-        StartCoroutine(FadeRotation(currentDegree, degree));
+        StartCoroutine(FadeRotation(0.26f));
     }
-    //     150              -90           => 240  /19  * Time*deltaTime
-    IEnumerator FadeRotation(float currentDegree, float degree)
+
+    // 150              -90           => 240  /19  * Time* deltaTime
+    //transform.rotation = Quaternion.Lerp(transform.rotation, Target.rotation, timeCount* _speed);
+    //timeCount = timeCount + Time.deltaTime;
+    //IEnumerator FadeRotation(float currentDegree, float degree)
+    //{
+    //    float t = currentDegree;
+    //    while (t >= degree)
+    //    {
+    //        yield return new WaitForEndOfFrame();
+    //        t -= _smoothRotation * Time.deltaTime;
+    //        Quaternion target = Quaternion.Euler(transform.rotation.x, transform.rotation.y, (t > degree) ? t : degree);
+    //        transform.rotation = target;
+    //    }
+    //}
+    IEnumerator FadeRotation(float TotalTime)
     {
-        float t = currentDegree;
-        while (t >= degree)
+        var passed = 0f;
+        var init = transform.rotation;
+        while (passed < TotalTime)
         {
-            yield return null;
-            t -= _smoothRotation;
-            Quaternion target = Quaternion.Euler(transform.rotation.x, transform.rotation.y, (t > degree) ? t : degree);
-            transform.rotation = target;
+            yield return new WaitForEndOfFrame();
+            passed += Time.deltaTime;
+            var normalized = passed / TotalTime;
+            transform.rotation = Quaternion.Lerp(init, Target.rotation, normalized);
+
         }
     }
+
     // 0.5   0.02978008
     // x =?    y = ok     => x     
     public void CaculerStartWidthTrail()
@@ -114,6 +131,104 @@ public class StickG2 : MonoBehaviour
         {
             _isCollisionMelon = true;
         }
-
+    }  
+    public float R()
+    {
+        return transform.lossyScale.y * _height;
     }
+    public float crossPointBetweenCircleAndLinear(float PosX)
+    {
+        // Have I (a,b)
+
+        //=>  circleEquation
+        // ( x-a)^2 + (y-b)^2 = R^2
+
+        // x^2 - 2xa + a^2 + y^2 - 2yb + b^2 = R^2
+
+        // y^2 -2xb + ( x^2 - 2xa+ a^2+ b^2-R^2)
+
+        // A = 1
+        // B = -2*b
+        // => C =x^2 - 2xa+ a^2+ b^2-R^2
+
+        // I (a,b)
+        float a = transform.position.x;
+        float b = transform.position.y;
+        float x = PosX;
+
+        float A = 1;
+        float B = -2 * b;
+        float C = (x * x) - (2 * x * a) + (a * a) + (b * b) - (R()*R());
+
+        float PosY = quadraticEquation2(A, B, C);
+
+        return PosY; // crossPoint ( PosX, PosY)
+    }
+  
+   public float quadraticEquation2(float A, float B, float C)
+    {
+        float a = A;
+        float b = B;
+        float c = C;
+
+        if (a == 0)
+        {
+            if (b == 0)
+            {
+               // Console.Write("Phuong trinh vo nghiem!");
+            }
+            else
+            {
+               // Console.Write("Phuong trinh co mot nghiem: x = {0}", (-c / b));
+            }
+            //return;
+        }
+    
+        float delta = b * b - 4 * a * c;
+        float x1=0;
+        float x2=0;
+  
+        if (delta > 0)
+        {
+            x1 = (float)((-b + Mathf.Sqrt(delta)) / (2 * a));
+            x2 = (float)((-b - Mathf.Sqrt(delta)) / (2 * a));
+           // Console.Write("Phuong trinh co 2 nghiem la: x1 = {0} va x2 = {1}", x1, x2);
+        }
+        else if (delta == 0)
+        {
+            x1 = (-b / (2 * a));
+           //Console.Write("Phong trinh co nghiem kep: x1 = x2 = {0}", x1);
+        }
+        else
+        {
+           // Console.Write("Phuong trinh vo nghiem!");
+        }
+
+        return x1;
+    }
+    public Vector3 FindVectorTowardsI(Vector3 desVector)
+    {
+        return new Vector3(transform.position.x - desVector.x, transform.position.y - desVector.y, 0);
+    }
+    public float FindAngleRotaion(Vector3 DesVectorB)
+    {
+        float Angle = -155f;
+
+        if(DesVectorB.y!=0)
+        {
+            Vector3 desVectorA = new Vector3(transform.position.x, transform.position.y + R(), 0);
+
+            Vector3 A = FindVectorTowardsI(desVectorA);
+
+            Vector3 B = FindVectorTowardsI(DesVectorB);
+
+            // cos( A;B) = x*x'+y*y'/ can(x^2+y^2)*can(x'^2+y'^2)
+
+            float cosAB = (A.x * B.x + A.y * B.y) / (Mathf.Sqrt(A.x * A.x + A.y * A.y) * Mathf.Sqrt(B.x * B.x + B.y * B.y));
+
+            Angle = - Mathf.Acos(cosAB)*45f / 0.7853981634f;
+        }
+        return Angle;
+    }
+
 }

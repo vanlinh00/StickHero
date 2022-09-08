@@ -15,9 +15,23 @@ public enum SoundType
     fall=8,
     roll_up_down =9,
 }
-public class SoundManager : Singleton<SoundManager>
+public class SoundManager : MonoBehaviour
 {
+    public static SoundManager _instance;
     public AudioSource audioFx;
+    private void Awake()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this);
+            return;
+        }
+        else
+        {
+            _instance = this;
+        }
+        DontDestroyOnLoad(this);
+    }
     private void OnValidate()
     {
         if (audioFx == null)
@@ -31,6 +45,4 @@ public class SoundManager : Singleton<SoundManager>
         audioFx.clip = audio;
         audioFx.Play();
     }
-
-
 }

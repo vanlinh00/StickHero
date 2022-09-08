@@ -4,12 +4,10 @@ using UnityEngine;
 public class Parabola
 {
     float heigh;
-
     public Parabola(float heigh)
     {
         this.heigh = heigh;
     }
-
     public void Move(Transform target, Vector3 a, Vector3 b, float time)
     {
         float target_X = a.x + (b.x - a.x) * time;

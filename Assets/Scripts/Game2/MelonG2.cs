@@ -34,7 +34,6 @@ public class MelonG2 : MonoBehaviour
             StartCoroutine(TimeWait());
         }
     }
-    
     IEnumerator TimeWait()
     {
         yield return new WaitForSeconds(1f);
