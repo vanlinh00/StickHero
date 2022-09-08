@@ -4627,6 +4627,7 @@ MonoBehaviour:
   _distanceBeweentBg: 18.99258
   _distanceBeweentBg2: 18.9
   _hero: {fileID: 0}
+  _currentPosXHero: 0
   idBg: 1
 --- !u!1 &1403060341
 GameObject:

@@ -10,9 +10,9 @@ public class GameControllerG2 : Singleton<GameControllerG2>
      
     [SerializeField] HeroG2 _hero;
     [SerializeField] StickG2 _stick;
-   
-    private bool _isStickPill = false;
+    [SerializeField] ColumnG2 _nextColumn;
 
+    private bool _isStickPill = false;
     private int _currentScore = 0;
     float _angleRotaion = 0f;
     bool _isTouchCol = false;
@@ -22,7 +22,10 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     {
         base.Awake();
     }
-
+    private void Start()
+    {
+        BackGroundController._instance._currentPosXHero = _hero.transform.position.x;
+    }
     void Update()
     {
         if (!_isStickPill)
@@ -32,7 +35,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         }
         if (Input.GetMouseButtonDown(0)&& !_isStickPill)
         {
-            _stick.CaculerStartWidthTrail();
+            _nextColumn = columnsManager.GetNextColum().GetComponent<ColumnG2>();
 
             Vector3 CrossPoint = calculerCrossPoint();
 
@@ -50,17 +53,12 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         }   
     }
 
-    private void Start()
-    {
-        BackGroundController._instance._currentPosXHero = _hero.transform.position.x;
-    }
    Vector3 calculerCrossPoint()
     {
-        // find crossPoint
-        float PosX = columnsManager.GetNextColum().GetComponent<ColumnG2>().linearEquations();
-        float PosY = _stick.crossPointBetweenCircleAndLinear(PosX);
-
         Vector3 CrossPoint = new Vector3();
+        // find crossPoint
+        float PosX = _nextColumn.linearEquations();
+        float PosY = _stick.crossPointBetweenCircleAndLinear(PosX);
 
         if (PosY == 0)
         {
@@ -68,15 +66,15 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         }
         else
         {
-            if (PosY >= columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosY())
+            if (PosY >= _nextColumn.HeaderPosY())
             {
-                if (_stick.transform.position.y > columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosY())
+                if (_stick.transform.position.y > _nextColumn.HeaderPosY())
                 {
                     if (_stick.R() > calculerBCWithPyTago())
                     {
                         _isTouchCol = true;
 
-                        CrossPoint = new Vector3(PosX, columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosY(), 0);
+                        CrossPoint = new Vector3(PosX, _nextColumn.HeaderPosY(), 0);
                     }
                     else
                     {
@@ -86,12 +84,12 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                 else
                 {
                     _isTouchCol = true;
-
-                    CrossPoint = new Vector3(PosX, columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosY(), 0);
+                    CrossPoint = new Vector3(PosX, _nextColumn.HeaderPosY(), 0);
                 }
-            }
+             }
             else
             {
+                _isTouchCol = true;
                 CrossPoint = new Vector3(PosX, PosY, 0);
             }
         }
@@ -99,7 +97,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     }
     IEnumerator HeroSPill()
     {
-        yield return new WaitForSeconds(0.05059631417f);
+        yield return new WaitForSeconds(0.09059631417f);
         _hero.isHeroSpill = true;
         yield return new WaitForSeconds(0.255f);
         //_stick.isStickSPill = false;
@@ -113,18 +111,20 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         _stick.ResetStick();
         _hero.ResetHero();
 
-        if (_stick._isCollisionMelon&& !_isTouchCol)
+        if (_stick._isCollisionMelon && !_isTouchCol)
         {
             GamePlayG2._instance.UpdateScore(1);
             _currentScore++;
 
-            // Hero Move
+            // Hero Move to next col
             Vector3 PosHeadCol = columnsManager.GetPosHeadNextCol();
             Vector3 NewPosHero = new Vector3(PosHeadCol.x+ 0.141f, PosHeadCol.y + 0.092534f, 0);
+            _stick.gameObject.SetActive(false);
             _hero._isMove = true;
             _hero.UpdateMoveMent(NewPosHero, 0.5f);
             yield return new WaitForSeconds(0.5f);
             _hero._isMove = false;
+            _stick.gameObject.SetActive(true);
 
             CameraController._instance.FllowToPlayer();
             BackGroundController._instance.FllowPlayer();
@@ -149,14 +149,23 @@ public class GameControllerG2 : Singleton<GameControllerG2>
 
             if (_countTurn<=1)
             {
+                _stick.gameObject.SetActive(false);
                 _hero.StateDance();
                 yield return new WaitForSeconds(1f);
                 _hero.StateIdle();
+                _stick.gameObject.SetActive(true);
                 _isStickPill = false;
+
+                yield return new WaitForSeconds(0.3f);
+
+                melonManger.GetCurrentMelon().GetComponent<MelonG2>().EnableMelonAgain();
             }
             else
             {
                 _hero.MoveDown();
+
+                CameraController._instance.Shake();
+                yield return new WaitForSeconds(0.8f);
                 UIControllerG2._instance.EnableGameOver();
             }
             
@@ -164,14 +173,15 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         _isTouchCol = false;
         _stick._isCollisionMelon = false;
     }
+ 
 
     float calculerBCWithPyTago()
     {
-       //float AB = Mathf.Abs(_stick.transform.position.y) - Mathf.Abs(columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosY());
-       //float AC = Mathf.Abs(_stick.transform.position.x) - Mathf.Abs(columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosX());
-       //return Mathf.Sqrt(AB * AB + AC * AC);
+        //float AB = Mathf.Abs(_stick.transform.position.y) - Mathf.Abs(_nextColumn.HeaderPosY());
+        //float AC = Mathf.Abs(_stick.transform.position.x) - Mathf.Abs(_nextColumn.HeaderPosX());
+        //return Mathf.Sqrt(AB * AB + AC * AC);
 
-       Vector3 HeaderCol = new Vector3 (columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosX(), columnsManager.GetNextColum().GetComponent<ColumnG2>().HeaderPosY(), 0);
+       Vector3 HeaderCol = new Vector3 (_nextColumn.HeaderPosX(), _nextColumn.HeaderPosY(), 0);
        float dist = Vector3.Distance(HeaderCol, _stick.transform.position);
        return dist;
     }

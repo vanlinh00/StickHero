@@ -170,19 +170,6 @@ public class StickG2 : MonoBehaviour
         float a = A;
         float b = B;
         float c = C;
-
-        if (a == 0)
-        {
-            if (b == 0)
-            {
-               // Console.Write("Phuong trinh vo nghiem!");
-            }
-            else
-            {
-               // Console.Write("Phuong trinh co mot nghiem: x = {0}", (-c / b));
-            }
-            //return;
-        }
     
         float delta = b * b - 4 * a * c;
         float x1=0;

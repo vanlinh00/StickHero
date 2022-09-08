@@ -47,29 +47,24 @@ public class HeroG2 : MonoBehaviour
             timeCount = timeCount + Time.deltaTime/2;
         }
     }
-  public void EnableAnimator(bool res)
+   public void EnableAnimator(bool res)
     {
         _animator.gameObject.SetActive(res);
     }
    public void StateIdle()
     {
         _stickClone.SetActive(false);
-        _stick.gameObject.SetActive(true);
-        _stick.ResetStick();
 
         _animator.SetBool("Dance", false);
         _animator.SetBool("Rotate", false);
     }
     public void StateDance()
     {
-        _animator.SetBool("Dance", true);
-
         _stickClone.SetActive(true);
-        _stick.gameObject.SetActive(false);
+        _animator.SetBool("Dance", true);
     }
     public void StateRotate()
     {
-        _stick.gameObject.SetActive(false);
         _stickClone.SetActive(true);
 
         _animator.SetBool("Dance", false);
@@ -100,8 +95,8 @@ public class HeroG2 : MonoBehaviour
     //}
     public void MoveDown()
     {
-        Vector3 Target = new Vector3(transform.position.x, transform.position.y - 5f, 0);
-        transform.DOMove(Target, 0.2f);
+        Vector3 Target = new Vector3(transform.position.x, transform.position.y - 10f, 0);
+        transform.DOMove(Target, 0.8f);
     }
     public void ResetHero()
     {

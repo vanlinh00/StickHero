@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MelonG2 : MonoBehaviour
 {
-   public float d;
+    public float d;
     [SerializeField] Animator _animator;
+    public Vector3 oldPosition;
+    private GameObject _effectBreak;
 
     // HeightStick = distance x stick to x nextcol
     public Vector3 CaculerPosMelon(float AB, float HeightStick, Vector3 PosHeadNextCol)
@@ -25,18 +28,52 @@ public class MelonG2 : MonoBehaviour
     public void Idle()
     {
         _animator.SetBool("Break", false);
+        _animator.SetBool("In", false);
+    }
+    public void Zoom()
+    {
+        _animator.SetBool("Break", false);
+        _animator.SetBool("In", true);
+    }
+    public void MoveDown()
+    {
+        Vector3 Target = new Vector3(transform.position.x, transform.position.y - 15f, 0);
+        transform.DOMove(Target, 0.5f);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Stick"))
         {
+            _effectBreak= ObjectPooler._instance.SpawnFromPool("EffectBreak", transform.position, Quaternion.identity);
+
             Break();
             StartCoroutine(TimeWait());
         }
     }
     IEnumerator TimeWait()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.2f);
+        MoveDown();
+        yield return new WaitForSeconds(0.5f);
+        Idle();
+
+        _effectBreak.SetActive(false);
+        ObjectPooler._instance.AddElement("EffectBreak", _effectBreak);
+       // gameObject.SetActive(false);
+    }
+    public void EnableMelon()
+    {
+        gameObject.SetActive(true);
+
+    }
+    public void EnableMelonAgain()
+    {
+        transform.position = oldPosition;
+        Zoom();
+       // gameObject.SetActive(true);
+    }
+    public void DisableMelon()
+    {
         gameObject.SetActive(false);
     }
 }
