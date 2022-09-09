@@ -5,7 +5,7 @@ using UnityEngine;
 public class ColumnsManagerG2 : MonoBehaviour
 {
     [SerializeField] GameObject _nextColumn;
-   public void BornNewColumn()
+   public void BornNewColumn(Vector3 PosHero)
     {
         int LastNumbCol = transform.childCount - 1;
         Vector3 PosChildColumn = transform.GetChild(LastNumbCol).transform.position;
@@ -13,17 +13,26 @@ public class ColumnsManagerG2 : MonoBehaviour
         GameObject NewCol = ObjectPooler._instance.SpawnFromPool("Column", NewPosCol, Quaternion.identity);
         _nextColumn = NewCol;
         NewCol.transform.parent = transform;
-
         ObjectPooler._instance.AddElement("Column", transform.GetChild(0).transform.gameObject);
         transform.GetChild(0).transform.gameObject.transform.parent = ObjectPooler._instance.transform;
-
         Vector3 NewPos = new Vector3(NewCol.transform.position.x-4f, NewPosCol.y , 0);
-        StartCoroutine(WaitTimeNextColMove(NewPos, 0.2f));
+        StartCoroutine(WaitTimeNextColMove(NewPos, 0.2f, PosHero));
     }
-    IEnumerator WaitTimeNextColMove(Vector3 Target, float TimeMove)
+
+    IEnumerator WaitTimeNextColMove(Vector3 TargetPosCol, float TimeMove, Vector3 PosHero)
     {
         yield return new WaitForSeconds(0.2f);
-        NextColMoveToTarget(Target, TimeMove);
+        NextColMoveToTarget(TargetPosCol, TimeMove);
+        BornNewMelon(TargetPosCol, PosHero);
+    }
+    void BornNewMelon(Vector3 TargetPosCol,Vector3 PosHero)
+    {
+        float disStickAndNextCol = TargetPosCol.x - PosHero.x;
+        Vector3 PosA = new Vector3(TargetPosCol.x, PosHero.y, 0);
+
+        MelonG2Manger._instance.BornNewMelon(disStickAndNextCol, disStickAndNextCol, PosA);
+        MelonG2Manger._instance.CurrentMelonMoveToTarget(MelonG2Manger._instance.GetCurrentMelon(), 0.2f);
+        //MelonG2Manger._instance.CurrentMelonMoveToTarget(MelonG2Manger._instance.GetCurrentMelon2(), 0.2f);
     }
     public void NextColMoveToTarget(Vector3 Target, float TimeMove)
     {
@@ -54,5 +63,6 @@ public class ColumnsManagerG2 : MonoBehaviour
     {
         return _nextColumn;
     }
+
    
 }

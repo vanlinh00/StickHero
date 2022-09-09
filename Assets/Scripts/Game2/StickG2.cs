@@ -80,6 +80,7 @@ public class StickG2 : MonoBehaviour
 
     public void Spill()
     {
+        AudioManager._instance.OnPlayAudio(SoundType.slice_nothing);
         CaculerStartWidthTrail();
         StartCoroutine(FadeRotation(0.26f));
     }
@@ -116,7 +117,7 @@ public class StickG2 : MonoBehaviour
     // x =?    y = ok     => x     
     public void CaculerStartWidthTrail()
     {
-        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f -0.1f;
+        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f +0.1f;
         trailRenderer.gameObject.SetActive(true);
     }
     public void ResetStick()

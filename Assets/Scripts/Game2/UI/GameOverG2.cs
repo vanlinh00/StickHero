@@ -34,4 +34,21 @@ public class GameOverG2 : Singleton<GameOverG2>
     {
         gameObject.SetActive(true);
     }
+    public void SetCurrentScore()
+    {
+       _currentScoreTxt.text = GameControllerG2._instance.GetCurrentScore().ToString();
+        SetBestScore(GameControllerG2._instance.GetCurrentScore());
+    }
+    public void SetBestScore(int CurrentScore)
+    {
+        int BestScore = DataPlayer.getInforPlayer().bestScoreG2;
+
+        if (BestScore < CurrentScore)
+        {
+            BestScore = CurrentScore;
+
+            DataPlayer.UpdateBestScoreG2(BestScore);
+        }
+        _bestScoreTxt.text = BestScore.ToString();
+    }
 }

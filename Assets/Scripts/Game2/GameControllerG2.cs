@@ -11,12 +11,14 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     [SerializeField] HeroG2 _hero;
     [SerializeField] StickG2 _stick;
     [SerializeField] ColumnG2 _nextColumn;
+    [SerializeField] ColumnG2 _firstColumn;
 
     private bool _isStickPill = false;
     private int _currentScore = 0;
     float _angleRotaion = 0f;
     bool _isTouchCol = false;
     int _countTurn = 0;
+    bool _isResetStick = false;
 
     protected override void Awake()
     {
@@ -24,14 +26,25 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     }
     private void Start()
     {
-        BackGroundController._instance._currentPosXHero = _hero.transform.position.x;
+        BackGroundController._instance._currentPosXHero = _firstColumn.HeaderPosX() + 0.301f;
+        Vector3 NewPosHero = new Vector3(_firstColumn.HeaderPosX() + 0.301f, _firstColumn.HeaderPosY() + 0.092534f, 0);
+        HerMoveToTarget(NewPosHero);
     }
+
     void Update()
     {
         if (!_isStickPill)
         {
-            _stick.GrowUp();
-            _stick.GetDown();
+            if(!_isResetStick)
+            {
+                _stick.ResetStick();
+                _isResetStick = true;
+            }
+            else
+            {
+                _stick.GrowUp();
+                _stick.GetDown();
+            }
         }
         if (Input.GetMouseButtonDown(0)&& !_isStickPill)
         {
@@ -48,7 +61,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             _stick.Spill();
 
             _isStickPill = true;
-
+            _isResetStick = false;
             StartCoroutine(HeroSPill());
         }   
     }
@@ -90,6 +103,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             else
             {
                 _isTouchCol = true;
+
                 CrossPoint = new Vector3(PosX, PosY, 0);
             }
         }
@@ -111,11 +125,8 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         _stick.ResetStick();
         _hero.ResetHero();
 
-        if (_stick._isCollisionMelon && !_isTouchCol)
+        if (_stick._isCollisionMelon && !_isTouchCol )
         {
-            GamePlayG2._instance.UpdateScore(1);
-            _currentScore++;
-
             // Hero Move to next col
             Vector3 PosHeadCol = columnsManager.GetPosHeadNextCol();
             Vector3 NewPosHero = new Vector3(PosHeadCol.x+ 0.141f, PosHeadCol.y + 0.092534f, 0);
@@ -126,17 +137,16 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             _hero._isMove = false;
             _stick.gameObject.SetActive(true);
 
+            GamePlayG2._instance.UpdateScore(1);
+            _currentScore++;
+            AudioManager._instance.OnPlayAudio(SoundType.score);
+
             CameraController._instance.FllowToPlayer();
             BackGroundController._instance.FllowPlayer();
 
             yield return new WaitForSeconds(0.3f);
-            columnsManager.BornNewColumn();
+            columnsManager.BornNewColumn(_hero.transform.position);
             yield return new WaitForSeconds(0.5f);
-
-            float disStickAndNextCol = columnsManager.GetNextColum().transform.position.x - _hero.transform.position.x;
-            Vector3 PosA = new Vector3(columnsManager.GetNextColum().transform.position.x, _hero.transform.position.y, 0);
-
-            melonManger.BornNewMelon(disStickAndNextCol, disStickAndNextCol, PosA);
 
             _isStickPill = false;
             _countTurn = 0;
@@ -147,7 +157,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         {
             _countTurn++;
 
-            if (_countTurn<=1)
+            if (_countTurn <= 1)
             {
                 _stick.gameObject.SetActive(false);
                 _hero.StateDance();
@@ -157,24 +167,41 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                 _isStickPill = false;
 
                 yield return new WaitForSeconds(0.3f);
-
                 melonManger.GetCurrentMelon().GetComponent<MelonG2>().EnableMelonAgain();
+                //if (melonManger.GetCurrentMelon2() != null)
+                //{
+                //    melonManger.GetCurrentMelon2().GetComponent<MelonG2>().EnableMelonAgain();
+                //}
             }
             else
             {
                 _hero.MoveDown();
-
+                AudioManager._instance.OnPlayAudio(SoundType.dead);
                 CameraController._instance.Shake();
                 yield return new WaitForSeconds(0.8f);
                 UIControllerG2._instance.EnableGameOver();
+                GameOverG2._instance.SetCurrentScore();
             }
             
         }
         _isTouchCol = false;
         _stick._isCollisionMelon = false;
     }
- 
-
+    void HerMoveToTarget(Vector3 NewPosHero)
+    {
+        StartCoroutine(FadeHeroMove(NewPosHero));
+    }
+    IEnumerator FadeHeroMove(Vector3 NewPosHero)
+    {
+        _stick.gameObject.SetActive(false);
+        _hero._isMove = true;
+        _hero.UpdateMoveMent(NewPosHero, 0.5f);
+        yield return new WaitForSeconds(0.5f);
+        _hero._isMove = false;
+        yield return new WaitForSeconds(0.1f);
+        _stick.ResetStick();
+        _stick.gameObject.SetActive(true);
+    }
     float calculerBCWithPyTago()
     {
         //float AB = Mathf.Abs(_stick.transform.position.y) - Mathf.Abs(_nextColumn.HeaderPosY());

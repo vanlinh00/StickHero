@@ -14,6 +14,9 @@ public enum SoundType
     bg_sea=7,
     fall=8,
     roll_up_down =9,
+    slice_nothing=10,
+    slice_watermelon_small=11,
+    stick_fallen=12,
 }
 public class SoundManager : MonoBehaviour
 {

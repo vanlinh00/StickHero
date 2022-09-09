@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: 1720187173804801567}
   - component: {fileID: 4799734785053003383}
   - component: {fileID: 4669132973648145978}
+  - component: {fileID: -6276722856819527334}
   m_Layer: 0
   m_Name: Melon
   m_TagString: Melon
@@ -261,6 +262,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   d: 0
   _animator: {fileID: 7380422449818473447}
+  oldPosition: {x: 0, y: 0, z: 0}
+  gigidbody: {fileID: 0}
 --- !u!60 &4669132973648145978
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -309,3 +312,24 @@ PolygonCollider2D:
       - {x: 0.68065673, y: -0.024410859}
       - {x: 0.6758831, y: 0.1905511}
       - {x: 0.6376637, y: 0.29203963}
+--- !u!50 &-6276722856819527334
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7571975785192338135}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 0

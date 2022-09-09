@@ -9,7 +9,12 @@ public class MelonG2 : MonoBehaviour
     [SerializeField] Animator _animator;
     public Vector3 oldPosition;
     private GameObject _effectBreak;
+    public Rigidbody2D gigidbody;
 
+    private void Start()
+    {
+        gigidbody = GetComponent<Rigidbody2D>();
+    }
     // HeightStick = distance x stick to x nextcol
     public Vector3 CaculerPosMelon(float AB, float HeightStick, Vector3 PosHeadNextCol)
     {
@@ -35,17 +40,14 @@ public class MelonG2 : MonoBehaviour
         _animator.SetBool("Break", false);
         _animator.SetBool("In", true);
     }
-    public void MoveDown()
-    {
-        Vector3 Target = new Vector3(transform.position.x, transform.position.y - 15f, 0);
-        transform.DOMove(Target, 0.5f);
-    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Stick"))
         {
-            _effectBreak= ObjectPooler._instance.SpawnFromPool("EffectBreak", transform.position, Quaternion.identity);
-
+            MelonG2Manger._instance.SetCountTouchMelon();
+            AudioManager._instance.OnPlayAudio(SoundType.slice_watermelon_small);
+            gameObject.GetComponent<PolygonCollider2D>().enabled = false;
+            _effectBreak = ObjectPooler._instance.SpawnFromPool("EffectBreak", transform.position, Quaternion.identity);
             Break();
             StartCoroutine(TimeWait());
         }
@@ -53,13 +55,25 @@ public class MelonG2 : MonoBehaviour
     IEnumerator TimeWait()
     {
         yield return new WaitForSeconds(0.2f);
-        MoveDown();
+        // MoveDown();
+        gigidbody.gravityScale = 5;
         yield return new WaitForSeconds(0.5f);
         Idle();
 
+        gigidbody.gravityScale = 0;
+        gigidbody.bodyType = RigidbodyType2D.Static;
+        yield return new WaitForSeconds(0.1f);
+        gigidbody.bodyType = RigidbodyType2D.Dynamic;
+        gameObject.GetComponent<PolygonCollider2D>().enabled = true;
         _effectBreak.SetActive(false);
+
         ObjectPooler._instance.AddElement("EffectBreak", _effectBreak);
-       // gameObject.SetActive(false);
+        // gameObject.SetActive(false);
+    }
+    public void MoveDown()
+    {
+        Vector3 Target = new Vector3(transform.position.x, transform.position.y - 10f, 0);
+        transform.DOMove(Target, 0.8f);
     }
     public void EnableMelon()
     {

@@ -833,7 +833,8 @@ MonoBehaviour:
   melonManger: {fileID: 819859276}
   _hero: {fileID: 1280520604}
   _stick: {fileID: 218012741}
-  _nextColumn: {fileID: 0}
+  _nextColumn: {fileID: 2060481440}
+  _firstColumn: {fileID: 6119393347464548316}
 --- !u!4 &814357976
 Transform:
   m_ObjectHideFlags: 0
@@ -913,6 +914,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentMelon: {fileID: 2810604479913481930}
+  _currentMelon2: {fileID: 0}
 --- !u!1 &936575356
 GameObject:
   m_ObjectHideFlags: 0
@@ -1014,7 +1016,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1018742872}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2.288, y: -0.726, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1321,7 +1323,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1280520602}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.17, y: -0.65, z: -0}
+  m_LocalPosition: {x: -3.491, y: 5.455, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 218012740}
@@ -1497,6 +1499,10 @@ MonoBehaviour:
     size: 5
   - tag: EffectBreak
     prefab: {fileID: 3886731269722600968, guid: f633780e7f3cef747bf49e9967929130,
+      type: 3}
+    size: 5
+  - tag: MelonSm
+    prefab: {fileID: 7914640197025367404, guid: ca15f9b2cd3dcba4b8d6ed2496f455cf,
       type: 3}
     size: 5
 --- !u!4 &1603644491
@@ -2244,6 +2250,7 @@ MonoBehaviour:
   d: 0
   _animator: {fileID: 2916306316393543674}
   oldPosition: {x: -1.17, y: -0.21, z: 0}
+  gigidbody: {fileID: 0}
 --- !u!1 &916149299468980458
 GameObject:
   m_ObjectHideFlags: 0
@@ -2357,7 +2364,26 @@ Transform:
   m_Father: {fileID: 916149299468980461}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!60 &1069707760368519719
+--- !u!1 &2810604479913481930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6470299542829111810}
+  - component: {fileID: 903076602186394218}
+  - component: {fileID: 2810604479913481931}
+  - component: {fileID: 2810604479913481932}
+  m_Layer: 0
+  m_Name: Melon
+  m_TagString: Melon
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!60 &2810604479913481931
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2382,47 +2408,41 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.52135456, y: 0.47013173}
-      - {x: 0.32964918, y: 0.6312632}
-      - {x: 0, y: 0.70527476}
-      - {x: -0.15809432, y: 0.687904}
-      - {x: -0.41157737, y: 0.5687934}
-      - {x: -0.532312, y: 0.44227526}
-      - {x: -0.62836665, y: 0.2823374}
-      - {x: -0.6790706, y: 0.11442489}
-      - {x: -0.6549388, y: 0.10667088}
-      - {x: -0.6944245, y: 0.049781904}
-      - {x: -0.68065745, y: -0.099051386}
-      - {x: -0.67028856, y: -0.24060702}
-      - {x: -0.64108026, y: -0.27546778}
-      - {x: -0.40887147, y: -0.552614}
-      - {x: -0.31461996, y: -0.66510516}
-      - {x: -0.17682606, y: -0.68787485}
-      - {x: 0.05222781, y: -0.7257248}
-      - {x: 0.32375872, y: -0.6567987}
-      - {x: 0.38294208, y: -0.5926847}
-      - {x: 0.6592378, y: -0.27863315}
-      - {x: 0.68065673, y: -0.024410859}
-      - {x: 0.6758831, y: 0.1905511}
-      - {x: 0.6376637, y: 0.29203963}
---- !u!1 &2810604479913481930
-GameObject:
+    - - {x: 0.6016915, y: 0.34440538}
+      - {x: 0.56391084, y: 0.40856862}
+      - {x: 0.3123175, y: 0.6287067}
+      - {x: 0.017926931, y: 0.7086867}
+      - {x: -0.43056262, y: 0.5592431}
+      - {x: -0.66422504, y: 0.24627255}
+      - {x: -0.6923182, y: -0.16476764}
+      - {x: -0.44885117, y: -0.53563076}
+      - {x: -0.1639831, y: -0.70217615}
+      - {x: 0.16141081, y: -0.7066062}
+      - {x: 0.44885153, y: -0.6028569}
+      - {x: 0.68100476, y: -0.20537357}
+      - {x: 0.7151655, y: 0.05501233}
+      - {x: 0.6373346, y: 0.20145531}
+--- !u!50 &2810604479913481932
+Rigidbody2D:
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6470299542829111810}
-  - component: {fileID: 903076602186394218}
-  - component: {fileID: 1069707760368519719}
-  m_Layer: 0
-  m_Name: Melon
-  m_TagString: Melon
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_GameObject: {fileID: 2810604479913481930}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 0
 --- !u!4 &2916306315615828666
 Transform:
   m_ObjectHideFlags: 0
@@ -2711,7 +2731,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &3426137750521985944
 Animator:
   serializedVersion: 3
@@ -3341,8 +3361,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _restartBt: {fileID: 4036254207029450864}
   _homeBt: {fileID: 4036254205779896905}
-  _currentScoreTxt: {fileID: 4036254206651949279}
-  _bestScoreTxt: {fileID: 4036254205282936950}
+  _currentScoreTxt: {fileID: 4036254207009933821}
+  _bestScoreTxt: {fileID: 4036254205169773750}
   _canvasGroup: {fileID: 4036254205515231723}
 --- !u!225 &4036254205515231723
 CanvasGroup:
@@ -4616,7 +4636,7 @@ Transform:
   m_GameObject: {fileID: 2810604479913481930}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.17, y: -0.21, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children:
   - {fileID: 2916306316393543677}
   m_Father: {fileID: 819859274}

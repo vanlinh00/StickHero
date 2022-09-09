@@ -23,6 +23,7 @@ public class DataPlayer
                 amountMelon = 0,
                 listIdHero = new List<int>() { 0},
                 idHeroPlaying=0,
+                bestScoreG2=0,
             };
             SaveData();
         }
@@ -67,6 +68,11 @@ public class DataPlayer
         inforPlayer.idHeroPlaying = IdHero;
         SaveData();
     }
+    public static void UpdateBestScoreG2(int BestScore)
+    {
+        inforPlayer.bestScoreG2 = BestScore;
+        SaveData();
+    }
     public static InforPlayer getInforPlayer()
     {
         return inforPlayer;
@@ -77,6 +83,7 @@ public class InforPlayer
 {
     public bool idLoadGameAgain;
     public int bestScore;
+    public int bestScoreG2;
     public int amountMelon;
     public List<int> listIdHero;
     public int idHeroPlaying;
