@@ -22,6 +22,7 @@ public class GameHome : Singleton<GameHome>
         _audioBtn.gameObject.transform.GetChild(0).gameObject.SetActive(!isActive);
 
         AudioSource audioSource = SoundManager._instance.GetComponent<AudioSource>();
+    
         if(!isActive)
         {
             audioSource.volume = 0f;

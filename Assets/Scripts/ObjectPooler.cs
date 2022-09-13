@@ -25,6 +25,7 @@ public class ObjectPooler : Singleton<ObjectPooler>
     void Start()
     {
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
+
         foreach (Pool pool in pools)
         {
             Queue<GameObject> queueObjectPool = new Queue<GameObject>();

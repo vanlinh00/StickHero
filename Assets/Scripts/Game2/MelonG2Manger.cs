@@ -5,13 +5,16 @@ using UnityEngine;
 public class MelonG2Manger : Singleton<MelonG2Manger>
 {
     [SerializeField] GameObject _currentMelon;
-
     [SerializeField] GameObject _currentMelon2=null;
 
     private int _countTouchMelon = 0;
     protected override void Awake()
     {
         base.Awake();
+    }
+    private void Start()
+    {
+        _countTouchMelon = 0;
     }
     public void BornNewMelon(float AB, float HeightStick, Vector3 PosA)
     {
@@ -27,29 +30,31 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
           ObjectPooler._instance.AddElement("Melon", NewMeLon);
          _currentMelon = NewMeLon;
 
-         // if(Random.RandomRange(1,3)==1)
-         //{
-         //   GameObject NewMeLon2 = ObjectPooler._instance.SpawnFromPool("Melon", ObjectPooler._instance.transform.position, Quaternion.identity);
-         //   MelonG2 Melon2 = NewMeLon2.GetComponent<MelonG2>();
+        if (Random.RandomRange(1, 3) == 1)
+        {
+            GameObject NewMeLon2 = ObjectPooler._instance.SpawnFromPool("Melon", ObjectPooler._instance.transform.position, Quaternion.identity);
+            MelonG2 Melon2 = NewMeLon2.GetComponent<MelonG2>();
 
-         //   Vector3 RealPosMelon2 = new Vector3();
-         //   Vector3 FakePosMelon2 = new Vector3();
-         //   if (PosA.y <= RealPosMelon1.y)
-         //   {
-         //       RealPosMelon2 = new Vector3(RealPosMelon1.x, RealPosMelon1.y - Melon.d - 0.5f, 0);
-         //       FakePosMelon2 = new Vector3(RealPosMelon1.x + 4f, RealPosMelon1.y - Melon.d - 0.5f, 0);
-         //   }
-         //   else
-         //   {
-         //       RealPosMelon2 = new Vector3(RealPosMelon1.x, RealPosMelon1.y + Melon.d + 0.5f, 0);
-         //       FakePosMelon2 = new Vector3(RealPosMelon1.x + 4f, RealPosMelon1.y + Melon.d + 0.5f, 0);
-         //   }
-         //   Melon2.oldPosition = RealPosMelon2;
-         //   Melon2.transform.position = FakePosMelon2;
+            Vector3 RealPosMelon2 = new Vector3();
+            Vector3 FakePosMelon2 = new Vector3();
 
-         //   ObjectPooler._instance.AddElement("Melon", NewMeLon2);
-         //   _currentMelon2 = NewMeLon2;
-        //}
+            if (PosA.y <= RealPosMelon1.y)
+            {
+                RealPosMelon2 = new Vector3(RealPosMelon1.x, RealPosMelon1.y - Melon.d - 0.5f, 0);
+                FakePosMelon2 = new Vector3(RealPosMelon1.x + 4f, RealPosMelon1.y - Melon.d - 0.5f, 0);
+            }
+            else
+            {
+                RealPosMelon2 = new Vector3(RealPosMelon1.x, RealPosMelon1.y + Melon.d + 0.5f, 0);
+                FakePosMelon2 = new Vector3(RealPosMelon1.x + 4f, RealPosMelon1.y + Melon.d + 0.5f, 0);
+            }
+
+            Melon2.oldPosition = RealPosMelon2;
+            Melon2.transform.position = FakePosMelon2;
+
+            ObjectPooler._instance.AddElement("Melon", NewMeLon2);
+            _currentMelon2 = NewMeLon2;
+        }
 
     }
 
@@ -66,10 +71,6 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
         Vector3 Target = new Vector3(Melon.transform.position.x - 4f, Melon.transform.position.y, 0);
         StartCoroutine(Move(Melon.transform, Target, TimeMove));
     }
-    public void ResetMelon()
-    {
-        _currentMelon2 = null;
-    }
     public int CountMelonInCase()
     {
         if(_currentMelon2!=null)
@@ -81,6 +82,40 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
     public void SetCountTouchMelon()
     {
         _countTouchMelon++;
+    }
+    public void ResetCountTouchMelon()
+    {
+        _countTouchMelon = 0;
+    }
+    public void ResetManagerMelon()
+    {
+        _currentMelon.GetComponent<MelonG2>().isStickTouch = false;
+
+        if (_currentMelon2 != null)
+        {
+            _currentMelon2.GetComponent<MelonG2>().isStickTouch = false;
+        }
+        _currentMelon2 = null;
+    }
+    public void LoadMelonAgain()
+    {
+        MelonG2 CurrentMelon = _currentMelon.GetComponent<MelonG2>();
+        MelonG2 CurrentMelon2 = _currentMelon2.GetComponent<MelonG2>();
+
+        if (CurrentMelon.isStickTouch)
+        {
+            CurrentMelon.EnableMelonAgain();
+        }
+        if (CurrentMelon2.isStickTouch)
+        {
+            CurrentMelon2.EnableMelonAgain();
+        }
+        ResetCountTouchMelon();
+    }
+
+    public int GetCountTouchMelon()
+    {
+        return _countTouchMelon;
     }
     public bool IsEnoughMelon()
     {
@@ -103,5 +138,19 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
             yield return null;
         }
 
+    }
+    public void LoadMelonAgainCaseIsTouchColFalse()
+    {
+        MelonG2 CurrentMelon = _currentMelon.GetComponent<MelonG2>();
+        MelonG2 CurrentMelon2 = _currentMelon2.GetComponent<MelonG2>();
+
+        if (!CurrentMelon.isStickTouch)
+        {
+            CurrentMelon.EnableMelonAgain();
+        }
+        if (!CurrentMelon2.isStickTouch)
+        {
+            CurrentMelon2.EnableMelonAgain();
+        }
     }
 }

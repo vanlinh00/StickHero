@@ -7,7 +7,7 @@ public class GamePlayG2 : Singleton<GamePlayG2>
 {
     [SerializeField] Text _scoreTxt;
     [SerializeField] Text _countLemonTxt;
-   // [SerializeField] Text _tutorialTxt;
+    [SerializeField] Text _perfectTxt;
 
     Animator _animatorScoreTxt;
 
@@ -18,6 +18,8 @@ public class GamePlayG2 : Singleton<GamePlayG2>
     void Start()
     {
         _animatorScoreTxt = _scoreTxt.GetComponent<Animator>();
+        int CountCurrentLemo = GameControllerG2._instance.GetCountCurrentLemon();
+        _countLemonTxt.text = CountCurrentLemo.ToString();
     }
     public void UpdateScore(int Score)
     {
@@ -32,10 +34,19 @@ public class GamePlayG2 : Singleton<GamePlayG2>
         yield return new WaitForSeconds(0.45f);
         _animatorScoreTxt.SetBool("AddScore", false);
     }
-    //public void UpdateAmountMeLon(int AmountLemon)
-    //{
-    //    GameManager._instance.SetCountCurrentLemon(AmountLemon);
-    //    int CountCurrentLemo = GameManager._instance.GetCountCurrentLemon();
-    //    _countLemonTxt.text = CountCurrentLemo.ToString();
-    //}
+    public void EnablePerfectTxt()
+    {
+        _perfectTxt.gameObject.SetActive(true);
+    }
+    public void DisablePerfectTxt()
+    {
+        _perfectTxt.gameObject.SetActive(false);
+    }
+
+    public void UpdateAmountMeLon(int AmountLemon)
+    {
+        GameControllerG2._instance.SetCountCurrentLemon(AmountLemon);
+        int CountCurrentLemo = GameControllerG2._instance.GetCountCurrentLemon();
+        _countLemonTxt.text = CountCurrentLemo.ToString();
+    }
 }

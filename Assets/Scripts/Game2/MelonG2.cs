@@ -10,6 +10,7 @@ public class MelonG2 : MonoBehaviour
     public Vector3 oldPosition;
     private GameObject _effectBreak;
     public Rigidbody2D gigidbody;
+    public bool isStickTouch = false;
 
     private void Start()
     {
@@ -44,6 +45,7 @@ public class MelonG2 : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Stick"))
         {
+            isStickTouch = true;
             MelonG2Manger._instance.SetCountTouchMelon();
             AudioManager._instance.OnPlayAudio(SoundType.slice_watermelon_small);
             gameObject.GetComponent<PolygonCollider2D>().enabled = false;
@@ -57,7 +59,7 @@ public class MelonG2 : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         // MoveDown();
         gigidbody.gravityScale = 5;
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.2f);
         Idle();
 
         gigidbody.gravityScale = 0;
@@ -69,6 +71,10 @@ public class MelonG2 : MonoBehaviour
 
         ObjectPooler._instance.AddElement("EffectBreak", _effectBreak);
         // gameObject.SetActive(false);
+    }
+    public void ResetMelon()
+    {
+        isStickTouch = false;
     }
     public void MoveDown()
     {

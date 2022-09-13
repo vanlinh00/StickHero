@@ -13,60 +13,48 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     [SerializeField] ColumnG2 _nextColumn;
     [SerializeField] ColumnG2 _firstColumn;
 
-    private bool _isStickPill = false;
+    public bool _isStickPill = false;
     private int _currentScore = 0;
     float _angleRotaion = 0f;
     bool _isTouchCol = false;
     int _countTurn = 0;
-    bool _isResetStick = false;
 
+    private int _countCurrentLemon;
     protected override void Awake()
     {
         base.Awake();
     }
     private void Start()
     {
+        _countTurn = 0;
         BackGroundController._instance._currentPosXHero = _firstColumn.HeaderPosX() + 0.301f;
         Vector3 NewPosHero = new Vector3(_firstColumn.HeaderPosX() + 0.301f, _firstColumn.HeaderPosY() + 0.092534f, 0);
         HerMoveToTarget(NewPosHero);
+
+        _countCurrentLemon = DataPlayer.getInforPlayer().amountMelon;
     }
 
     void Update()
     {
         if (!_isStickPill)
         {
-            if(!_isResetStick)
-            {
-                _stick.ResetStick();
-                _isResetStick = true;
-            }
-            else
-            {
-                _stick.GrowUp();
-                _stick.GetDown();
-            }
+           _stick.GrowUp();
+           _stick.GetDown();
         }
         if (Input.GetMouseButtonDown(0)&& !_isStickPill)
         {
             _nextColumn = columnsManager.GetNextColum().GetComponent<ColumnG2>();
-
-            Vector3 CrossPoint = calculerCrossPoint();
-
+            Vector3 CrossPoint = CalculerCrossPoint();
             _angleRotaion = _stick.FindAngleRotaion(CrossPoint);
-
             _stick.UpdateRatation(_angleRotaion);
-
             // _stick.isStickSPill = true;
-
             _stick.Spill();
-
             _isStickPill = true;
-            _isResetStick = false;
             StartCoroutine(HeroSPill());
         }   
     }
 
-   Vector3 calculerCrossPoint()
+   Vector3 CalculerCrossPoint()
     {
         Vector3 CrossPoint = new Vector3();
         // find crossPoint
@@ -118,60 +106,79 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         StartCoroutine(CheckStick());
     }
     IEnumerator CheckStick()
-    {
+    {    
         yield return new WaitForSeconds(0.255f);
         _hero.isHeroSpill = false;
-
         _stick.ResetStick();
         _hero.ResetHero();
 
-        if (_stick._isCollisionMelon && !_isTouchCol )
+        if (!_isTouchCol && MelonG2Manger._instance.IsEnoughMelon())
         {
+            _countTurn = 0;
+
+            if (MelonG2Manger._instance.GetCountTouchMelon() == 2)
+            {
+                SoundManager._instance.OnPlayAudio(SoundType.perfect);
+                GamePlayG2._instance.EnablePerfectTxt();
+            }
+
+            MelonG2Manger._instance.ResetCountTouchMelon();
+            MelonG2Manger._instance.ResetManagerMelon();
+
             // Hero Move to next col
             Vector3 PosHeadCol = columnsManager.GetPosHeadNextCol();
             Vector3 NewPosHero = new Vector3(PosHeadCol.x+ 0.141f, PosHeadCol.y + 0.092534f, 0);
-            _stick.gameObject.SetActive(false);
+
+            _stick.DisnableStick();
             _hero._isMove = true;
             _hero.UpdateMoveMent(NewPosHero, 0.5f);
             yield return new WaitForSeconds(0.5f);
             _hero._isMove = false;
-            _stick.gameObject.SetActive(true);
+            _stick.EnableStick();
+            _isStickPill = false;
 
             GamePlayG2._instance.UpdateScore(1);
-            _currentScore++;
             AudioManager._instance.OnPlayAudio(SoundType.score);
-
             CameraController._instance.FllowToPlayer();
             BackGroundController._instance.FllowPlayer();
-
             yield return new WaitForSeconds(0.3f);
             columnsManager.BornNewColumn(_hero.transform.position);
-            yield return new WaitForSeconds(0.5f);
-
-            _isStickPill = false;
-            _countTurn = 0;
-
+            yield return new WaitForSeconds(1f);
+            GamePlayG2._instance.DisablePerfectTxt();
             BornBackGroundFromObjectPool();
         }
         else
-        {
+        {  
             _countTurn++;
+            Debug.Log(_countTurn);
 
-            if (_countTurn <= 1)
+            if (_countTurn < 2)
             {
-                _stick.gameObject.SetActive(false);
+                _stick.DisnableStick();
                 _hero.StateDance();
                 yield return new WaitForSeconds(1f);
                 _hero.StateIdle();
-                _stick.gameObject.SetActive(true);
+                _stick.EnableStick();
                 _isStickPill = false;
+                yield return new WaitForSeconds(0.2f);
 
-                yield return new WaitForSeconds(0.3f);
-                melonManger.GetCurrentMelon().GetComponent<MelonG2>().EnableMelonAgain();
-                //if (melonManger.GetCurrentMelon2() != null)
-                //{
-                //    melonManger.GetCurrentMelon2().GetComponent<MelonG2>().EnableMelonAgain();
-                //}
+                if (MelonG2Manger._instance.CountMelonInCase() == 1)
+                {
+                    melonManger.GetCurrentMelon().GetComponent<MelonG2>().EnableMelonAgain();
+                    MelonG2Manger._instance.ResetCountTouchMelon();
+                }
+                else
+                { 
+                    if (_isTouchCol)
+                    {
+                        MelonG2Manger._instance.LoadMelonAgain();
+                    }
+                    else
+                    {
+                        MelonG2Manger._instance.LoadMelonAgainCaseIsTouchColFalse();
+                    }
+                }
+
             }
             else
             {
@@ -185,7 +192,6 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             
         }
         _isTouchCol = false;
-        _stick._isCollisionMelon = false;
     }
     void HerMoveToTarget(Vector3 NewPosHero)
     {
@@ -193,14 +199,14 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     }
     IEnumerator FadeHeroMove(Vector3 NewPosHero)
     {
-        _stick.gameObject.SetActive(false);
+        _stick.DisnableStick();
         _hero._isMove = true;
         _hero.UpdateMoveMent(NewPosHero, 0.5f);
         yield return new WaitForSeconds(0.5f);
         _hero._isMove = false;
+        _stick.ResetStick();     // set active = false thi lam sao ma Reset duoc nua
         yield return new WaitForSeconds(0.1f);
-        _stick.ResetStick();
-        _stick.gameObject.SetActive(true);
+        _stick.EnableStick();
     }
     float calculerBCWithPyTago()
     {
@@ -232,14 +238,15 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     {
         return _currentScore;
     }
-    //public void SetCountCurrentLemon(int AmountLemon)
-    //{
-    //    _countCurrentLemon += AmountLemon;
-    //    DataPlayer.UpdateAmountHero(_countCurrentLemon);
-    //}
-    //public int GetCountCurrentLemon()
-    //{
-    //    return _countCurrentLemon;
-    //}
+
+    public void SetCountCurrentLemon(int AmountLemon)
+    {
+        _countCurrentLemon += AmountLemon;
+        DataPlayer.UpdateAmountHero(_countCurrentLemon);
+    }
+    public int GetCountCurrentLemon()
+    {
+        return _countCurrentLemon;
+    }
 
 }

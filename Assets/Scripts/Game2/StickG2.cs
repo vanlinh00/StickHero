@@ -8,7 +8,7 @@ public class StickG2 : MonoBehaviour
     [SerializeField] float _speedScale;
     [SerializeField] float _smoothRotation;
 
-    private float _maxScale = 0.25f;      //  0.008999998  =>0.17009997732
+    private float _maxScale = 0.19f;      //  0.008999998  =>0.17009997732
     private float _minScale = 0.009f;   //                   3.5
     private float _height = 18.9f;
 
@@ -18,31 +18,35 @@ public class StickG2 : MonoBehaviour
     Vector3 newScale = new Vector3();
 
     [SerializeField] TrailRenderer trailRenderer;
+
     [SerializeField] Vector3 _oldlocalScale;
 
     private float _angleRotaion = 0f;
+
     float timeCount = 0.0f;
+
     //public float _speed = 1f;
 
     public bool isStickSPill = false;
 
-    public bool _isCollisionMelon = false;
-
     public Transform Target;
-    
+
+    private SpriteRenderer spriteRenderer;
     private void Start()
     {
         _isScaleMax = true;
         _isScaleMin = false;
         trailRenderer.gameObject.SetActive(false);
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     private void Update()
     {
-    //    if (isStickSPill)
-    //    {
-    //        transform.rotation = Quaternion.Lerp(transform.rotation, Target.rotation, timeCount /** _speed*/);
-    //        timeCount = timeCount + Time.deltaTime;
-    //    }
+        //    if (isStickSPill)
+        //    {
+        //        transform.rotation = Quaternion.Lerp(transform.rotation, Target.rotation, timeCount /** _speed*/);
+        //        timeCount = timeCount + Time.deltaTime;
+        //    }
     }
     public void UpdateRatation(float RotationZ)
     {
@@ -56,32 +60,33 @@ public class StickG2 : MonoBehaviour
         if (transform.localScale.y <= _maxScale && _isScaleMax)
         {
             newScale = new Vector3(transform.localScale.x, transform.localScale.y + Time.deltaTime * _speedScale, 0);
+            transform.localScale = newScale;
         }
         else
         {
             _isScaleMax = false;
             _isScaleMin = true;
         }
-        transform.localScale = newScale;
     }
     public void GetDown()
     {
         if (transform.localScale.y >= _minScale && _isScaleMin)
         {
             newScale = new Vector3(transform.localScale.x, transform.localScale.y - Time.deltaTime * _speedScale, 0);
+            transform.localScale = newScale;
         }
         else
         {
             _isScaleMax = true;
             _isScaleMin = false;
         }
-        transform.localScale = newScale;
     }
-
     public void Spill()
     {
         AudioManager._instance.OnPlayAudio(SoundType.slice_nothing);
+         trailRenderer.emitting = true;
         CaculerStartWidthTrail();
+        //StartCoroutine(FadeRotation(Mathf.Abs(_angleRotaion * 0.26f / 155)));
         StartCoroutine(FadeRotation(0.26f));
     }
 
@@ -103,15 +108,17 @@ public class StickG2 : MonoBehaviour
     {
         var passed = 0f;
         var init = transform.rotation;
-        while (passed < TotalTime)
+        while (passed < TotalTime) 
         {
             yield return new WaitForEndOfFrame();
             passed += Time.deltaTime;
             var normalized = passed / TotalTime;
             transform.rotation = Quaternion.Lerp(init, Target.rotation, normalized);
-
         }
+        yield return new WaitForEndOfFrame();
+        trailRenderer.emitting = false;
     }
+
 
     // 0.5   0.02978008
     // x =?    y = ok     => x     
@@ -125,14 +132,19 @@ public class StickG2 : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, 0, 0);
         transform.localScale = _oldlocalScale;
         trailRenderer.gameObject.SetActive(false);
-    }
-    public void OnTriggerEnter2D(Collider2D collision)
+    } 
+    public void EnableStick()
     {
-        if(collision.gameObject.CompareTag("Melon"))
-        {
-            _isCollisionMelon = true;
-        }
-    }  
+        Color newColor = spriteRenderer.color;
+        newColor.a = 1f;
+        spriteRenderer.color = newColor;
+    }
+    public void DisnableStick()
+    {
+        Color newColor = spriteRenderer.color;
+        newColor.a = 0f;
+        spriteRenderer.color = newColor;
+    }
     public float R()
     {
         return transform.lossyScale.y * _height;
