@@ -59,7 +59,6 @@ public class HeroG2 : MonoBehaviour
    public void StateIdle()
     {
         _stickClone.SetActive(false);
-
         _animator.SetBool("Dance", false);
         _animator.SetBool("Rotate", false);
     }

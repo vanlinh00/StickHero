@@ -33,11 +33,6 @@ public class StickG2 : MonoBehaviour
 
     [SerializeField] SpriteRenderer _spriteRenderer;
 
-    // check Touch Melon Perfect
-    private float _oldTimeTouch;
-    public int countTouchMelon;
-    public bool isPerfect;
-
     // check touch col
     public bool isTouchCol;
 
@@ -47,11 +42,7 @@ public class StickG2 : MonoBehaviour
     }
     private void Start()
     {
-
         _target = new GameObject().transform;
-        _oldTimeTouch = 0f;
-        countTouchMelon = 0;
-        isPerfect = false;
 
         _isScaleMax = true;
         _isScaleMin = false;
@@ -143,10 +134,7 @@ public class StickG2 : MonoBehaviour
     // x =?    y = ok     => x     
     public void CaculerStartWidthTrail()
     {
-        //Debug.Log(R());
-        //1.872482 - 0.2
-        // R()    -  x
-        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f +0.2f* R()/ 1.872482f;
+        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f +0.2f;
         trailRenderer.gameObject.SetActive(true);
     }
     public void ResetStick()
@@ -199,12 +187,12 @@ public class StickG2 : MonoBehaviour
         float B = -2 * b;
         float C = (x * x) - (2 * x * a) + (a * a) + (b * b) - (R()*R());
 
-        float PosY = quadraticEquation2(A, B, C);
+        float PosY = QuadraticEquation2(A, B, C);
 
         return PosY; // crossPoint ( PosX, PosY)
     }
   
-   public float quadraticEquation2(float A, float B, float C)
+   public float QuadraticEquation2(float A, float B, float C)
     {
         float a = A;
         float b = B;
@@ -236,52 +224,39 @@ public class StickG2 : MonoBehaviour
     {
         return new Vector3(transform.position.x - desVector.x, transform.position.y - desVector.y, 0);
     }
-    public float FindAngleRotaion(Vector3 DesVectorB)
+    public float FindAngleRotationWithCrossPoint(Vector3 DesVectorB)
     {
         float Angle = -155f;
 
-        if(DesVectorB.y!=0)
+        if (DesVectorB.y != 0)
         {
-            Vector3 desVectorA = new Vector3(transform.position.x, transform.position.y + R(), 0);
-
-            Vector3 A = FindVectorTowardsI(desVectorA);
-
-            Vector3 B = FindVectorTowardsI(DesVectorB);
-
-            // cos( A;B) = x*x'+y*y'/ can(x^2+y^2)*can(x'^2+y'^2)
-
-            float cosAB = (A.x * B.x + A.y * B.y) / (Mathf.Sqrt(A.x * A.x + A.y * A.y) * Mathf.Sqrt(B.x * B.x + B.y * B.y));
-
-            Angle = - Mathf.Acos(cosAB)*45f / 0.7853981634f;
+            return FindAngleRotaion(DesVectorB);
         }
+        return Angle;
+    }
+    public float FindAngleRotaion(Vector3 DesVectorB)
+    {
+        float Angle = 0f;
+
+        Vector3 desVectorA = new Vector3(transform.position.x, transform.position.y + R(), 0);
+
+        Vector3 A = FindVectorTowardsI(desVectorA);
+
+        Vector3 B = FindVectorTowardsI(DesVectorB);
+
+        // cos( A;B) = x*x'+y*y'/ can(x^2+y^2)*can(x'^2+y'^2)
+
+        float cosAB = (A.x * B.x + A.y * B.y) / (Mathf.Sqrt(A.x * A.x + A.y * A.y) * Mathf.Sqrt(B.x * B.x + B.y * B.y));
+
+         Angle = - Mathf.Acos(cosAB)*45f / 0.7853981634f;
+
         return Angle;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Melon"))
-        {
-            countTouchMelon++;
-
-            if (countTouchMelon==1)
-            {
-                _oldTimeTouch = Time.time;
-            }
-            if(countTouchMelon == 2)
-            {
-                if(Time.time-_oldTimeTouch<=0.1f)
-                {
-                    isPerfect = true;
-                }
-                else
-                {
-                    isPerfect = false;
-                }
-            }
-        }
-        else if(collision.gameObject.CompareTag("Column"))
+         if(collision.gameObject.CompareTag("Column"))
         {
             isTouchCol = true;
         }
     }
-
 }

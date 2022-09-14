@@ -42,13 +42,13 @@ public class MelonG2 : MonoBehaviour
         _animator.SetBool("Break", false);
         _animator.SetBool("In", true);
     }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Stick"))
-        {
-            StickTouch();
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Stick"))
+    //    {
+    //        StickTouch();
+    //    }
+    //}
     public void StickTouch()
     {
         isStickTouch = true;
@@ -96,29 +96,30 @@ public class MelonG2 : MonoBehaviour
        // gameObject.SetActive(true);
     }
 
-    //public void CircleEquationMelon(Vector3 I1, float R1)
-    //{
-    //    // I (x,y)
-    //    // R 1.38
-    //    float DisI1I2 = Mathf.Sqrt((I2().x - I1.x) * (I2().x - I1.x) + (I2().y - I1.y) * (I2().y - I1.y));
-    //    if(DisI1I2>R1+R2())
-    //    {
-    //        isStickTouch = false;
+    public bool IsStickTouchWithCircleEquationMelon(Vector3 I1, float R1)
+    {
+        // I (x,y)
+        float DisI1I2 = Mathf.Sqrt((I2().x - I1.x) * (I2().x - I1.x) + (I2().y - I1.y) * (I2().y - I1.y));
 
-    //    }else if(DisI1I2==R1+R2()|| DisI1I2 ==Mathf.Abs( R1 - R2()))
-    //    {
-    //        StartCoroutine(WaitTimeDown());
-    //    }
-    //    else if(R1 - R2()< DisI1I2&& DisI1I2<R1+R2())
-    //    {
-    //        StartCoroutine(WaitTimeDown());
-    //    }
-    //}
-    //IEnumerator WaitTimeDown()
-    //{  
-    //    yield return new WaitForSeconds(0.136f);
-    //    StickTouch();
-    //}
+        if (DisI1I2 > R1 + R2())
+        {
+            isStickTouch = false;
+        }
+        else if ( DisI1I2 < Mathf.Abs(R1 - R2()))
+        {
+            isStickTouch = true;
+        }
+        else if ( Mathf.Abs(R1 - R2())<DisI1I2 && DisI1I2 < R2()+R1 )
+        {
+            isStickTouch = true;
+        }
+        return isStickTouch;
+    }
+    IEnumerator WaitTimeDown()
+    {
+        yield return new WaitForSeconds(0.136f);
+        StickTouch();
+    }
     public Vector3 I2()
     {
         return new Vector3(transform.position.x, transform.position.y, 0);
@@ -131,4 +132,20 @@ public class MelonG2 : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    public Vector3 PosHeaderMelon()
+    {
+        return new Vector3(transform.position.x, transform.position.y + R2()+0.1f, 0);
+    }
+    public bool IsBreakMelon(Vector3 I1, float R1,bool CheckAngle)
+    {
+        bool IsTouchCol = IsStickTouchWithCircleEquationMelon(I1, R1);
+
+       if (IsTouchCol && CheckAngle)
+        {
+            StartCoroutine(WaitTimeDown());
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -18,8 +18,8 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     float _angleRotaion = 0f;
     public bool _isTouchCol = false;
     int _countTurn = 0;
-
     private int _countCurrentLemon;
+
     protected override void Awake()
     {
         base.Awake();
@@ -27,7 +27,6 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     private void Start()
     {
         LoadCurrentHero();
-
         GameObject Player = GameObject.FindGameObjectWithTag("Player");
         _hero = Player.GetComponent<HeroG2>();
         _stick = Player.transform.GetChild(0).GetComponent<StickG2>();
@@ -51,14 +50,19 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         {
             _nextColumn = columnsManager.GetNextColum().GetComponent<ColumnG2>();
             Vector3 CrossPoint = CalculerCrossPoint();
-            _angleRotaion = _stick.FindAngleRotaion(CrossPoint);
+            _angleRotaion = _stick.FindAngleRotationWithCrossPoint(CrossPoint);
             _stick.UpdateRatation(_angleRotaion);
-            //melonManger.CheckStickTouchMelon(_stick.I(), _stick.R());
+            melonManger.CheckBreakMelon(_stick.I(), _stick.R());
             // _stick.isStickSPill = true;
             _stick.Spill();
            _isStickPill = true;
            StartCoroutine(HeroSPill());
         }   
+    }
+  public bool CheckStickTouchMelon(GameObject Melon)
+    {
+        float AngleMelonWithStick = _stick.FindAngleRotaion(Melon.GetComponent<MelonG2>().PosHeaderMelon());
+        return (Mathf.Abs( AngleMelonWithStick) <=Mathf.Abs(_angleRotaion)) ? true : false;
     }
 
    Vector3 CalculerCrossPoint()
@@ -78,7 +82,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             {
                 if (_stick.transform.position.y > _nextColumn.HeaderPosY())
                 {
-                    if (_stick.R() > calculerBCWithPyTago())
+                    if (_stick.R() > CalculerBCWithPyTago())
                     {
                         _isTouchCol = true;
 
@@ -122,7 +126,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         {
             _countTurn = 0;
 
-            if (_stick.isPerfect/*elonG2Manger._instance.GetCountTouchMelon() == 2*/)
+            if (melonManger.isPerfect)
             {
                 GamePlayG2._instance.UpdateScore(1);
                 SoundManager._instance.OnPlayAudio(SoundType.perfect);
@@ -166,9 +170,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                 yield return new WaitForSeconds(1f);
                 _hero.StateIdle();
                 _stick.EnableStick();
-
                 yield return new WaitForSeconds(0.2f);
-
                 if (MelonG2Manger._instance.CountMelonInCase() == 1)
                 {
                     melonManger.GetCurrentMelon().GetComponent<MelonG2>().EnableMelonAgain();
@@ -176,7 +178,6 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                 }
                 else
                 {
-                    //if (_isTouchCol)
                     if (_stick.isTouchCol)
                     {
                         MelonG2Manger._instance.LoadMelonAgain();
@@ -200,9 +201,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             }
             
         }
-        _stick.isPerfect = false;
-        _stick.countTouchMelon = 0;
-       // _isTouchCol = false;
+        melonManger.isPerfect = false;
         _stick.isTouchCol = false;
     }
     void HerMoveToTarget(Vector3 NewPosHero)
@@ -222,7 +221,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         yield return new WaitForSeconds(0.3f);
         _isStickPill = false;
     }
-    float calculerBCWithPyTago()
+    float CalculerBCWithPyTago()
     {
         //float AB = Mathf.Abs(_stick.transform.position.y) - Mathf.Abs(_nextColumn.HeaderPosY());
         //float AC = Mathf.Abs(_stick.transform.position.x) - Mathf.Abs(_nextColumn.HeaderPosX());
@@ -236,6 +235,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     void BornBackGroundFromObjectPool()
     {
         Vector3 PosLastChild = BackGroundController._instance.GetPosXLastChildBGDynamic();
+
         if (Mathf.Abs(_hero.transform.position.x - PosLastChild.x) < 9f)
         {
             BackGroundController._instance.BornNewBGDynamic();

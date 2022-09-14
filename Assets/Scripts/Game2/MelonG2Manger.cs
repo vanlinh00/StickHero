@@ -8,13 +8,15 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
     [SerializeField] GameObject _currentMelon2=null;
 
     private int _countTouchMelon = 0;
+    public bool isPerfect;
     protected override void Awake()
     {
         base.Awake();
     }
     private void Start()
     {
-        _countTouchMelon = 0;
+         isPerfect = false;
+         _countTouchMelon = 0;
     }
     public void BornNewMelon(float AB, float HeightStick, Vector3 PosA)
     {
@@ -155,14 +157,18 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
             CurrentMelon2.EnableMelonAgain();
         }
     }
-    //public void CheckStickTouchMelon(Vector3 I1,float R1)
-    //{
-    //    _currentMelon.GetComponent<MelonG2>().CircleEquationMelon(I1, R1);
-
-    //    if (_currentMelon2 != null)
-    //    {
-    //        _currentMelon2.GetComponent<MelonG2>().CircleEquationMelon(I1, R1);
-    //    }
-    //}
-
+    public void CheckBreakMelon(Vector3 I1, float R1)
+    {
+        bool CheckCurrentMelon1=false;
+        bool CheckCurrentMelon2=false;
+        CheckCurrentMelon1 = _currentMelon.GetComponent<MelonG2>().IsBreakMelon(I1, R1, GameControllerG2._instance.CheckStickTouchMelon(_currentMelon));
+        if (_currentMelon2 != null)
+        {
+            CheckCurrentMelon2= _currentMelon2.GetComponent<MelonG2>().IsBreakMelon(I1, R1, GameControllerG2._instance.CheckStickTouchMelon(_currentMelon2));
+        }
+        if(CheckCurrentMelon1&& CheckCurrentMelon2)
+        {
+            isPerfect = true;
+        }
+    }
 }
