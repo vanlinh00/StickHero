@@ -29,16 +29,35 @@ public class StickG2 : MonoBehaviour
 
     public bool isStickSPill = false;
 
-    public Transform Target;
+    private Transform _target;
 
-    private SpriteRenderer spriteRenderer;
+    [SerializeField] SpriteRenderer _spriteRenderer;
+
+    // check Touch Melon Perfect
+    private float _oldTimeTouch;
+    public int countTouchMelon;
+    public bool isPerfect;
+
+    // check touch col
+    public bool isTouchCol;
+
+    private void Awake()
+    {
+        _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+    }
     private void Start()
     {
+
+        _target = new GameObject().transform;
+        _oldTimeTouch = 0f;
+        countTouchMelon = 0;
+        isPerfect = false;
+
         _isScaleMax = true;
         _isScaleMin = false;
         trailRenderer.gameObject.SetActive(false);
 
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        isTouchCol = false;
     }
     private void Update()
     {
@@ -53,7 +72,7 @@ public class StickG2 : MonoBehaviour
         _angleRotaion = RotationZ;
         // _speed = Mathf.Abs(165 / RotationZ);
         //timeCount = 0.0f;
-        Target.eulerAngles = new Vector3(0, 0, RotationZ);
+        _target.eulerAngles = new Vector3(0, 0, RotationZ);
     }
     public void GrowUp()
     {
@@ -113,7 +132,7 @@ public class StickG2 : MonoBehaviour
             yield return new WaitForEndOfFrame();
             passed += Time.deltaTime;
             var normalized = passed / TotalTime;
-            transform.rotation = Quaternion.Lerp(init, Target.rotation, normalized);
+            transform.rotation = Quaternion.Lerp(init, _target.rotation, normalized);
         }
         yield return new WaitForEndOfFrame();
         trailRenderer.emitting = false;
@@ -124,7 +143,10 @@ public class StickG2 : MonoBehaviour
     // x =?    y = ok     => x     
     public void CaculerStartWidthTrail()
     {
-        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f +0.1f;
+        //Debug.Log(R());
+        //1.872482 - 0.2
+        // R()    -  x
+        trailRenderer.startWidth = (0.5f * transform.localScale.y) / 0.02978008f +0.2f* R()/ 1.872482f;
         trailRenderer.gameObject.SetActive(true);
     }
     public void ResetStick()
@@ -135,15 +157,19 @@ public class StickG2 : MonoBehaviour
     } 
     public void EnableStick()
     {
-        Color newColor = spriteRenderer.color;
+        Color newColor = _spriteRenderer.color;
         newColor.a = 1f;
-        spriteRenderer.color = newColor;
+        _spriteRenderer.color = newColor;
     }
     public void DisnableStick()
     {
-        Color newColor = spriteRenderer.color;
+        Color newColor = _spriteRenderer.color;
         newColor.a = 0f;
-        spriteRenderer.color = newColor;
+        _spriteRenderer.color = newColor;
+    }
+    public Vector3 I()
+    {
+        return new Vector3(transform.position.x, transform.position.y, 0);
     }
     public float R()
     {
@@ -229,6 +255,33 @@ public class StickG2 : MonoBehaviour
             Angle = - Mathf.Acos(cosAB)*45f / 0.7853981634f;
         }
         return Angle;
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Melon"))
+        {
+            countTouchMelon++;
+
+            if (countTouchMelon==1)
+            {
+                _oldTimeTouch = Time.time;
+            }
+            if(countTouchMelon == 2)
+            {
+                if(Time.time-_oldTimeTouch<=0.1f)
+                {
+                    isPerfect = true;
+                }
+                else
+                {
+                    isPerfect = false;
+                }
+            }
+        }
+        else if(collision.gameObject.CompareTag("Column"))
+        {
+            isTouchCol = true;
+        }
     }
 
 }

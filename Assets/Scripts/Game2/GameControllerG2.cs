@@ -13,10 +13,10 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     [SerializeField] ColumnG2 _nextColumn;
     [SerializeField] ColumnG2 _firstColumn;
 
-    public bool _isStickPill = false;
+    public bool _isStickPill = true;
     private int _currentScore = 0;
     float _angleRotaion = 0f;
-    bool _isTouchCol = false;
+    public bool _isTouchCol = false;
     int _countTurn = 0;
 
     private int _countCurrentLemon;
@@ -26,11 +26,17 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     }
     private void Start()
     {
+        LoadCurrentHero();
+
+        GameObject Player = GameObject.FindGameObjectWithTag("Player");
+        _hero = Player.GetComponent<HeroG2>();
+        _stick = Player.transform.GetChild(0).GetComponent<StickG2>();
+        _isStickPill = true;
         _countTurn = 0;
+
         BackGroundController._instance._currentPosXHero = _firstColumn.HeaderPosX() + 0.301f;
         Vector3 NewPosHero = new Vector3(_firstColumn.HeaderPosX() + 0.301f, _firstColumn.HeaderPosY() + 0.092534f, 0);
         HerMoveToTarget(NewPosHero);
-
         _countCurrentLemon = DataPlayer.getInforPlayer().amountMelon;
     }
 
@@ -47,10 +53,11 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             Vector3 CrossPoint = CalculerCrossPoint();
             _angleRotaion = _stick.FindAngleRotaion(CrossPoint);
             _stick.UpdateRatation(_angleRotaion);
+            //melonManger.CheckStickTouchMelon(_stick.I(), _stick.R());
             // _stick.isStickSPill = true;
             _stick.Spill();
-            _isStickPill = true;
-            StartCoroutine(HeroSPill());
+           _isStickPill = true;
+           StartCoroutine(HeroSPill());
         }   
     }
 
@@ -91,7 +98,6 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             else
             {
                 _isTouchCol = true;
-
                 CrossPoint = new Vector3(PosX, PosY, 0);
             }
         }
@@ -112,12 +118,13 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         _stick.ResetStick();
         _hero.ResetHero();
 
-        if (!_isTouchCol && MelonG2Manger._instance.IsEnoughMelon())
+        if (/*!_isTouchCol &&*/ MelonG2Manger._instance.IsEnoughMelon()&&!_stick.isTouchCol)
         {
             _countTurn = 0;
 
-            if (MelonG2Manger._instance.GetCountTouchMelon() == 2)
+            if (_stick.isPerfect/*elonG2Manger._instance.GetCountTouchMelon() == 2*/)
             {
+                GamePlayG2._instance.UpdateScore(1);
                 SoundManager._instance.OnPlayAudio(SoundType.perfect);
                 GamePlayG2._instance.EnablePerfectTxt();
             }
@@ -135,6 +142,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             yield return new WaitForSeconds(0.5f);
             _hero._isMove = false;
             _stick.EnableStick();
+            yield return new WaitForSeconds(0.3f);
             _isStickPill = false;
 
             GamePlayG2._instance.UpdateScore(1);
@@ -143,14 +151,13 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             BackGroundController._instance.FllowPlayer();
             yield return new WaitForSeconds(0.3f);
             columnsManager.BornNewColumn(_hero.transform.position);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.65f);
             GamePlayG2._instance.DisablePerfectTxt();
             BornBackGroundFromObjectPool();
         }
         else
         {  
             _countTurn++;
-            Debug.Log(_countTurn);
 
             if (_countTurn < 2)
             {
@@ -159,7 +166,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                 yield return new WaitForSeconds(1f);
                 _hero.StateIdle();
                 _stick.EnableStick();
-                _isStickPill = false;
+
                 yield return new WaitForSeconds(0.2f);
 
                 if (MelonG2Manger._instance.CountMelonInCase() == 1)
@@ -168,8 +175,9 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                     MelonG2Manger._instance.ResetCountTouchMelon();
                 }
                 else
-                { 
-                    if (_isTouchCol)
+                {
+                    //if (_isTouchCol)
+                    if (_stick.isTouchCol)
                     {
                         MelonG2Manger._instance.LoadMelonAgain();
                     }
@@ -178,7 +186,8 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                         MelonG2Manger._instance.LoadMelonAgainCaseIsTouchColFalse();
                     }
                 }
-
+                yield return new WaitForSeconds(0.1f);
+                _isStickPill = false;
             }
             else
             {
@@ -191,7 +200,10 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             }
             
         }
-        _isTouchCol = false;
+        _stick.isPerfect = false;
+        _stick.countTouchMelon = 0;
+       // _isTouchCol = false;
+        _stick.isTouchCol = false;
     }
     void HerMoveToTarget(Vector3 NewPosHero)
     {
@@ -207,6 +219,8 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         _stick.ResetStick();     // set active = false thi lam sao ma Reset duoc nua
         yield return new WaitForSeconds(0.1f);
         _stick.EnableStick();
+        yield return new WaitForSeconds(0.3f);
+        _isStickPill = false;
     }
     float calculerBCWithPyTago()
     {
@@ -238,7 +252,6 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     {
         return _currentScore;
     }
-
     public void SetCountCurrentLemon(int AmountLemon)
     {
         _countCurrentLemon += AmountLemon;
@@ -247,6 +260,11 @@ public class GameControllerG2 : Singleton<GameControllerG2>
     public int GetCountCurrentLemon()
     {
         return _countCurrentLemon;
+    }
+    public void LoadCurrentHero()
+    {
+        int idHero = DataPlayer.getInforPlayer().idHeroPlaying;
+        GameObject newHero = Instantiate(Resources.Load("Game2/Hero/Hero_" + idHero, typeof(GameObject))) as GameObject;
     }
 
 }

@@ -38,15 +38,17 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
             Vector3 RealPosMelon2 = new Vector3();
             Vector3 FakePosMelon2 = new Vector3();
 
+            float AddXValue = Random.RandomRange(0f, 1f);
+
             if (PosA.y <= RealPosMelon1.y)
             {
-                RealPosMelon2 = new Vector3(RealPosMelon1.x, RealPosMelon1.y - Melon.d - 0.5f, 0);
-                FakePosMelon2 = new Vector3(RealPosMelon1.x + 4f, RealPosMelon1.y - Melon.d - 0.5f, 0);
+                RealPosMelon2 = new Vector3(RealPosMelon1.x - AddXValue, RealPosMelon1.y - Melon.d - 0.5f, 0);
+                FakePosMelon2 = new Vector3(RealPosMelon2.x + 4f, RealPosMelon2.y, 0);
             }
             else
             {
-                RealPosMelon2 = new Vector3(RealPosMelon1.x, RealPosMelon1.y + Melon.d + 0.5f, 0);
-                FakePosMelon2 = new Vector3(RealPosMelon1.x + 4f, RealPosMelon1.y + Melon.d + 0.5f, 0);
+                RealPosMelon2 = new Vector3(RealPosMelon1.x - AddXValue, RealPosMelon1.y + Melon.d + 0.5f, 0);
+                FakePosMelon2 = new Vector3(RealPosMelon2.x + 4f, RealPosMelon2.y, 0);
             }
 
             Melon2.oldPosition = RealPosMelon2;
@@ -153,4 +155,14 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
             CurrentMelon2.EnableMelonAgain();
         }
     }
+    //public void CheckStickTouchMelon(Vector3 I1,float R1)
+    //{
+    //    _currentMelon.GetComponent<MelonG2>().CircleEquationMelon(I1, R1);
+
+    //    if (_currentMelon2 != null)
+    //    {
+    //        _currentMelon2.GetComponent<MelonG2>().CircleEquationMelon(I1, R1);
+    //    }
+    //}
+
 }

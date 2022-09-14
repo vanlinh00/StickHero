@@ -10,7 +10,7 @@ public class UIControllerG2 : Singleton<UIControllerG2>
     protected override void Awake()
     {
         base.Awake();
-    }
+    }   
     public void EnableGameOver()
     {
         _gameOver.SetActive(true);

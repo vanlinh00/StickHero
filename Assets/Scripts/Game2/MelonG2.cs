@@ -11,6 +11,7 @@ public class MelonG2 : MonoBehaviour
     private GameObject _effectBreak;
     public Rigidbody2D gigidbody;
     public bool isStickTouch = false;
+    private float _height = 1.38f;
 
     private void Start()
     {
@@ -45,14 +46,18 @@ public class MelonG2 : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Stick"))
         {
-            isStickTouch = true;
-            MelonG2Manger._instance.SetCountTouchMelon();
-            AudioManager._instance.OnPlayAudio(SoundType.slice_watermelon_small);
-            gameObject.GetComponent<PolygonCollider2D>().enabled = false;
-            _effectBreak = ObjectPooler._instance.SpawnFromPool("EffectBreak", transform.position, Quaternion.identity);
-            Break();
-            StartCoroutine(TimeWait());
+            StickTouch();
         }
+    }
+    public void StickTouch()
+    {
+        isStickTouch = true;
+        MelonG2Manger._instance.SetCountTouchMelon();
+        AudioManager._instance.OnPlayAudio(SoundType.slice_watermelon_small);
+        gameObject.GetComponent<CircleCollider2D>().enabled = false;
+        _effectBreak = ObjectPooler._instance.SpawnFromPool("EffectBreak", transform.position, Quaternion.identity);
+        Break();
+        StartCoroutine(TimeWait());
     }
     IEnumerator TimeWait()
     {
@@ -66,9 +71,8 @@ public class MelonG2 : MonoBehaviour
         gigidbody.bodyType = RigidbodyType2D.Static;
         yield return new WaitForSeconds(0.1f);
         gigidbody.bodyType = RigidbodyType2D.Dynamic;
-        gameObject.GetComponent<PolygonCollider2D>().enabled = true;
+        gameObject.GetComponent<CircleCollider2D>().enabled = true;
         _effectBreak.SetActive(false);
-
         ObjectPooler._instance.AddElement("EffectBreak", _effectBreak);
         // gameObject.SetActive(false);
     }
@@ -84,13 +88,44 @@ public class MelonG2 : MonoBehaviour
     public void EnableMelon()
     {
         gameObject.SetActive(true);
-
     }
     public void EnableMelonAgain()
     {
         transform.position = oldPosition;
         Zoom();
        // gameObject.SetActive(true);
+    }
+
+    //public void CircleEquationMelon(Vector3 I1, float R1)
+    //{
+    //    // I (x,y)
+    //    // R 1.38
+    //    float DisI1I2 = Mathf.Sqrt((I2().x - I1.x) * (I2().x - I1.x) + (I2().y - I1.y) * (I2().y - I1.y));
+    //    if(DisI1I2>R1+R2())
+    //    {
+    //        isStickTouch = false;
+
+    //    }else if(DisI1I2==R1+R2()|| DisI1I2 ==Mathf.Abs( R1 - R2()))
+    //    {
+    //        StartCoroutine(WaitTimeDown());
+    //    }
+    //    else if(R1 - R2()< DisI1I2&& DisI1I2<R1+R2())
+    //    {
+    //        StartCoroutine(WaitTimeDown());
+    //    }
+    //}
+    //IEnumerator WaitTimeDown()
+    //{  
+    //    yield return new WaitForSeconds(0.136f);
+    //    StickTouch();
+    //}
+    public Vector3 I2()
+    {
+        return new Vector3(transform.position.x, transform.position.y, 0);
+    }
+    public float R2()
+    {
+      return transform.lossyScale.y * _height/2;
     }
     public void DisableMelon()
     {

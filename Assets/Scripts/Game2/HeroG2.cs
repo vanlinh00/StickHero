@@ -13,26 +13,31 @@ public class HeroG2 : MonoBehaviour
     public bool _isMove = false;
     public float duration;
 
-    Parabola parabola;
-    Vector3 startPos;
-    private float preTime;
+    Parabola _parabola;
+    Vector3 _startPos;
+    private float _preTime;
 
     public bool isHeroSpill = false;
-    public Transform a;
-    float timeCount = 0.0f;
+    private Transform _targetAngle;
+    float _timeCount = 0.0f;
 
     [SerializeField] Animator _animator;
     [SerializeField] StickG2 _stick;
     [SerializeField] GameObject _stickClone;
-
     [SerializeField] GameObject _hero;
+
+    private void Start()
+    {
+        _targetAngle = new GameObject().transform;
+        _targetAngle.eulerAngles = new Vector3(0, 0, -70);
+    }
     private void Update()
     {
         if (_isMove)
         {    
-            if (((Time.time - preTime) / duration) <= 1)
+            if (((Time.time - _preTime) / duration) <= 1)
             {
-                parabola.Move(transform, startPos, _target, (Time.time - preTime) / duration);
+                _parabola.Move(transform, _startPos, _target, (Time.time - _preTime) / duration);
                 StateRotate();
             }
             else
@@ -43,8 +48,8 @@ public class HeroG2 : MonoBehaviour
         }
         if (isHeroSpill)
         {
-            _hero.transform.rotation = Quaternion.Lerp(_hero.transform.rotation, a.rotation, timeCount);
-            timeCount = timeCount + Time.deltaTime/2;
+            _hero.transform.rotation = Quaternion.Lerp(_hero.transform.rotation, _targetAngle.rotation, _timeCount);
+            _timeCount = _timeCount + Time.deltaTime/2;
         }
     }
    public void EnableAnimator(bool res)
@@ -74,9 +79,9 @@ public class HeroG2 : MonoBehaviour
     {
         _target = Target;
         duration = Duration;
-        preTime = Time.time;
-        startPos = transform.position;
-        parabola = new Parabola(1);
+        _preTime = Time.time;
+        _startPos = transform.position;
+        _parabola = new Parabola(1);
     }
     //public void Spill()
     //{
