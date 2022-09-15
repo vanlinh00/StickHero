@@ -128,8 +128,6 @@ public class StickG2 : MonoBehaviour
         yield return new WaitForEndOfFrame();
         trailRenderer.emitting = false;
     }
-
-
     // 0.5   0.02978008
     // x =?    y = ok     => x     
     public void CaculerStartWidthTrail()

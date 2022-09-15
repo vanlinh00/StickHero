@@ -5,7 +5,7 @@ using UnityEngine;
 public class MelonG2Manger : Singleton<MelonG2Manger>
 {
     [SerializeField] GameObject _currentMelon;
-    [SerializeField] GameObject _currentMelon2=null;
+    [SerializeField] GameObject _currentMelon2;
 
     private int _countTouchMelon = 0;
     public bool isPerfect;
@@ -17,6 +17,7 @@ public class MelonG2Manger : Singleton<MelonG2Manger>
     {
          isPerfect = false;
          _countTouchMelon = 0;
+        _currentMelon2 = null;
     }
     public void BornNewMelon(float AB, float HeightStick, Vector3 PosA)
     {

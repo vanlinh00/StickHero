@@ -122,7 +122,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
         _stick.ResetStick();
         _hero.ResetHero();
 
-        if (/*!_isTouchCol &&*/ MelonG2Manger._instance.IsEnoughMelon()&&!_stick.isTouchCol)
+        if (!_isTouchCol && MelonG2Manger._instance.IsEnoughMelon()/*&&!_stick.isTouchCol*/)
         {
             _countTurn = 0;
 
@@ -171,6 +171,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                 _hero.StateIdle();
                 _stick.EnableStick();
                 yield return new WaitForSeconds(0.2f);
+
                 if (MelonG2Manger._instance.CountMelonInCase() == 1)
                 {
                     melonManger.GetCurrentMelon().GetComponent<MelonG2>().EnableMelonAgain();
@@ -178,7 +179,7 @@ public class GameControllerG2 : Singleton<GameControllerG2>
                 }
                 else
                 {
-                    if (_stick.isTouchCol)
+                    if (/*_stick.isTouchCol*/_isTouchCol)
                     {
                         MelonG2Manger._instance.LoadMelonAgain();
                     }
@@ -202,7 +203,8 @@ public class GameControllerG2 : Singleton<GameControllerG2>
             
         }
         melonManger.isPerfect = false;
-        _stick.isTouchCol = false;
+       // _stick.isTouchCol = false;
+        _isTouchCol = false;
     }
     void HerMoveToTarget(Vector3 NewPosHero)
     {
